@@ -1,0 +1,101 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'java-gradle-plugin'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'com.gradle.plugin-publish' version '1.1.0'
+    id "com.diffplug.spotless" version "6.13.0"
+}
+apply plugin: 'maven-publish'
+
+group = 'me.hypherionmc.modutils'
+version = "${version_base}.${version_patch}"
+description = "Gradle plugin to Upload and Publish mods to Curseforge/Modrinth"
+archivesBaseName = 'ModPublisher'
+
+if (System.getenv('BUILD_NUMBER') != null) {
+    version = "${version_base}." + System.getenv('BUILD_NUMBER')
+}
+
+configurations {
+    shadeMe
+    implementation.extendsFrom shadeMe
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://maven.firstdarkdev.xyz/releases"
+    }
+}
+
+dependencies {
+    implementation gradleApi()
+
+    shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.1a"
+    shadeMe 'dev.masecla:Modrinth4J:2.0.1'
+}
+
+shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    configurations = [project.configurations.getByName("shadeMe")]
+    archiveClassifier.set(null)
+}
+
+gradlePlugin {
+    plugins {
+        modPublisherPlugin {
+            id = 'me.hypherionmc.modutils.modpublisher'
+            description = project.description
+            displayName = 'ModPublisher'
+            version = project.version
+            implementationClass = "me.hypherionmc.modpublisher.plugin.ModPublisherPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/firstdarkdev/modpublisher'
+    vcsUrl = 'https://github.com/firstdarkdev/modpublisher'
+    description = 'Gradle plugin to Upload and Publish mods to Curseforge/Modrinth in one go'
+    tags = ['modrinth', 'publish', 'mods', 'minecraft', 'curseforge']
+}
+
+jar {
+    manifest {
+        attributes([
+                'Timestamp'               : System.currentTimeMillis(),
+                'Specification-Title'     : project.archivesBaseName,
+                'Specification-Version'   : project.version,
+                'Implementation-Title'    : project.archivesBaseName,
+                'Implementation-Version'  : project.version,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})"
+        ])
+    }
+}
+
+spotless {
+    java {
+        targetExclude("src/test/**")
+        licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
+    }
+}
+
+publishing {
+    /*publications {
+        mavenJava(MavenPublication) {
+            artifact shadowJar
+        }
+    }*/
+
+    repositories {
+        maven {
+            url System.getenv('MAVEN_URL')
+            credentials {
+                username System.getenv('MAVEN_USER')
+                password System.getenv('MAVEN_PASS')
+            }
+        }
+    }
+}
