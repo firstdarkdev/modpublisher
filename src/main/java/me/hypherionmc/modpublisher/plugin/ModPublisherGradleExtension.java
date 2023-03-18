@@ -35,7 +35,7 @@ import java.util.List;
  */
 public class ModPublisherGradleExtension {
 
-    // API Keys for Modrinth/Curseforge. Used for publishing
+    // API Keys for Modrinth/Curseforge/GitHub. Used for publishing
     public ApiKeys apiKeys;
 
     // Enable debug mode. If enabled, no files will actually be uploaded
@@ -47,13 +47,16 @@ public class ModPublisherGradleExtension {
     // Modrinth Project ID (NOT SLUG)
     public String modrinthID;
 
+    // GitHub Repo. username/repo or URL
+    public String githubRepo;
+
     // Type of release. Valid entries: release, beta, alpha
     public String versionType = "release";
 
     // Changelog text to apply to the uploaded file
     public Object changelog;
 
-    // Version. Actually just used for Modrinth
+    // Version. Used for Modrinth and GitHub
     public String version;
 
     // Friendly display name for the files
@@ -104,6 +107,7 @@ public class ModPublisherGradleExtension {
     public static class ApiKeys {
         public String curseforge;
         public String modrinth;
+        public String github;
     }
 
     public static class Dependencies {

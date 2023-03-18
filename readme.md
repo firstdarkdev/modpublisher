@@ -1,8 +1,8 @@
 ## ModPublisher
 
-A gradle plugin that allows you to publish mods to Curseforge and Modrinth in one go.
+ModPublisher is a Gradle Plugin that allows modders to publish their mods to Modrinth, Curseforge and GitHub in one go.
 
-No more using two different plugins, when you can just use one.
+No need for separate plugins, just one!
 
 This plugin is mostly aimed at projects using MultiLoader Template and for our internal use, but anyone is free to use it.
 
@@ -76,3 +76,5 @@ modrinthDepends {
     embedded = ["hvFnDODi", "9s6osm5g"] // Embedded dependencies
 }
 ```
+
+For full documentation, checkout [ModPublisher Docs](https://modpublisher.fdd-docs.com/)

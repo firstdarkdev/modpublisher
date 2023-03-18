@@ -80,4 +80,22 @@ public class CommonUtil {
 
         return obj.toString();
     }
+
+    /**
+     * Cleanup GitHub URLS for use with hub4j
+     * @param url The URL as passed to the config
+     * @return Just the username/repo section of the URL
+     */
+    public static String cleanGithubUrl(String url) {
+        url = url.replace("https://github.com/", "");
+        url = url.replace("http://github.com/", "");
+        url = url.replace("git@github.com:", "");
+        url = url.replace(".git", "");
+
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() -1 );
+        }
+
+        return url;
+    }
 }

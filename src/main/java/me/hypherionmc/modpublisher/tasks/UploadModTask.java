@@ -40,6 +40,7 @@ public class UploadModTask extends DefaultTask {
         // Used later to check if the sub-task must be run
         boolean canUploadCurse = true;
         boolean canUploadModrinth = true;
+        boolean canUploadGithub = true;
 
         // Check if API Keys are configured
         if (extension.apiKeys == null) {
@@ -68,8 +69,16 @@ public class UploadModTask extends DefaultTask {
             canUploadModrinth = false;
         }
 
+        if (extension.apiKeys.github != null && !extension.apiKeys.github.isEmpty()) {
+            if (extension.githubRepo == null || extension.githubRepo.isEmpty()) {
+                throw new Exception("Found GitHub token, but githubRepo is not defined");
+            }
+        } else {
+            canUploadGithub = false;
+        }
+
         if (extension.version == null || extension.version.isEmpty()) {
-            throw new Exception("Version is not defined. This is REQUIRED by modrinth");
+            throw new Exception("Version is not defined. This is REQUIRED by modrinth/github");
         }
 
         if (extension.gameVersions.isEmpty()) {
@@ -90,6 +99,12 @@ public class UploadModTask extends DefaultTask {
         if (canUploadCurse) {
             CurseUploadTask curseUploadTask = new CurseUploadTask();
             curseUploadTask.upload();
+        }
+
+        // All checks passed, run GitHub upload task
+        if (canUploadGithub) {
+            GithubUploadTask githubUploadTask = new GithubUploadTask();
+            githubUploadTask.upload();
         }
     }
 
