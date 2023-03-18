@@ -32,7 +32,7 @@ repositories {
 dependencies {
     implementation gradleApi()
 
-    shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.3"
+    shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.4"
     shadeMe "dev.masecla:Modrinth4J:2.1.0"
     shadeMe "org.kohsuke:github-api:1.314"
 }
