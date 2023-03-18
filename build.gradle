@@ -12,6 +12,7 @@ group = 'me.hypherionmc.modutils'
 version = "${version_base}.${version_patch}"
 description = "Gradle plugin to Upload and Publish mods to Curseforge/Modrinth/Github"
 archivesBaseName = 'ModPublisher'
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 if (System.getenv('BUILD_NUMBER') != null) {
     version = "${version_base}." + System.getenv('BUILD_NUMBER')
@@ -32,7 +33,7 @@ repositories {
 dependencies {
     implementation gradleApi()
 
-    shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.4"
+    shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.5"
     shadeMe "dev.masecla:Modrinth4J:2.1.0"
     shadeMe "org.kohsuke:github-api:1.314"
 }

@@ -46,12 +46,12 @@ public class CommonUtil {
             throw new NullPointerException("Null Path");
         }
 
-        if (obj instanceof File file) {
-            return file;
+        if (obj instanceof File) {
+            return (File) obj;
         }
 
-        if (obj instanceof AbstractArchiveTask task) {
-            return task.getArchiveFile().get().getAsFile();
+        if (obj instanceof AbstractArchiveTask) {
+            return ((AbstractArchiveTask)obj).getArchiveFile().get().getAsFile();
         }
         return project.file(obj);
     }
@@ -63,19 +63,19 @@ public class CommonUtil {
         if (obj == null)
             throw new NullPointerException();
 
-        while (obj instanceof Closure<?> closure) {
-            obj = closure.call();
+        while (obj instanceof Closure<?>) {
+            obj = ((Closure<?>)obj).call();
         }
 
-        if (obj instanceof String s)
-            return s;
+        if (obj instanceof String)
+            return (String) obj;
 
-        if (obj instanceof File file) {
-            return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        if (obj instanceof File) {
+            return FileUtils.readFileToString((File) obj, StandardCharsets.UTF_8);
         }
 
-        if (obj instanceof AbstractArchiveTask task) {
-            return FileUtils.readFileToString(task.getArchiveFile().get().getAsFile(), StandardCharsets.UTF_8);
+        if (obj instanceof AbstractArchiveTask) {
+            return FileUtils.readFileToString(((AbstractArchiveTask)obj).getArchiveFile().get().getAsFile(), StandardCharsets.UTF_8);
         }
 
         return obj.toString();
