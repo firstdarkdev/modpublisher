@@ -36,6 +36,8 @@ dependencies {
     shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.5"
     shadeMe "dev.masecla:Modrinth4J:2.1.0"
     shadeMe "org.kohsuke:github-api:1.314"
+    shadeMe "org.apache.maven:maven-artifact:4.0.0-alpha-5"
+
 }
 
 shadowJar {
@@ -85,12 +87,6 @@ spotless {
 }
 
 publishing {
-    /*publications {
-        mavenJava(MavenPublication) {
-            artifact shadowJar
-        }
-    }*/
-
     repositories {
         maven {
             url System.getenv('MAVEN_URL')

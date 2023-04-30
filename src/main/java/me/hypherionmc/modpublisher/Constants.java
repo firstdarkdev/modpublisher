@@ -30,6 +30,9 @@ package me.hypherionmc.modpublisher;
 public class Constants {
 
     public static final String TASK_NAME = "publishMod";
+    public static final String CURSE_TASK = "publishCurseforge";
+    public static final String GITHUB_TASK = "publishGitHub";
+    public static final String MODRINTH_TASK = "publishModrinth";
     public static final String TASK_GROUP = "publishing";
     public static final String EXTENSION_NAME = "publisher";
 

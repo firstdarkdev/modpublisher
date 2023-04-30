@@ -24,8 +24,11 @@
 package me.hypherionmc.modpublisher.tasks;
 
 import me.hypherionmc.modpublisher.util.CommonUtil;
+import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import me.hypherionmc.modpublisher.util.UserAgentInterceptor;
 import okhttp3.OkHttpClient;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
 import org.kohsuke.github.*;
 import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
@@ -42,7 +45,7 @@ import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
  * Sub-Task to handle GitHub publishing. This task will only be executed if
  * an GitHub API Key and repo is supplied
  */
-public class GithubUploadTask {
+public class GithubUploadTask extends DefaultTask {
 
     // Instance of HUB4J to handle GitHub API communications
     private final GitHub gitHub;
@@ -65,8 +68,14 @@ public class GithubUploadTask {
     /**
      * Configure the upload and upload it
      */
-    public void upload() throws IOException {
+    @TaskAction
+    public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to GitHub");
+        UploadPreChecks.checkRequiredValues();
+        boolean canUpload = UploadPreChecks.canUploadGitHub();
+        if (!canUpload)
+            return;
+
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 
         if (uploadFile == null || !uploadFile.exists())

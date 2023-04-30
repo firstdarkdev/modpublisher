@@ -28,10 +28,13 @@ import me.hypherionmc.curseupload.constants.CurseChangelogType;
 import me.hypherionmc.curseupload.constants.CurseReleaseType;
 import me.hypherionmc.curseupload.requests.CurseArtifact;
 import me.hypherionmc.modpublisher.util.CommonUtil;
+import me.hypherionmc.modpublisher.util.UploadPreChecks;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
 import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
@@ -41,7 +44,7 @@ import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
  * Sub-Task to handle Curseforge publishing. This task will only be executed if
  * a Curseforge API Key and Project ID is supplied
  */
-public class CurseUploadTask {
+public class CurseUploadTask extends DefaultTask {
 
     // Instance of CurseUpload4J to use
     private final CurseUploadApi uploadApi;
@@ -57,8 +60,14 @@ public class CurseUploadTask {
     /**
      * Configure the upload and upload it
      */
-    public void upload() throws IOException {
+    @TaskAction
+    public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to Curseforge");
+        UploadPreChecks.checkRequiredValues();
+        boolean canUpload = UploadPreChecks.canUploadCurse();
+        if (!canUpload)
+            return;
+
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 
         if (uploadFile == null || !uploadFile.exists())
@@ -69,8 +78,39 @@ public class CurseUploadTask {
         artifact.changelogType(CurseChangelogType.MARKDOWN);
         artifact.releaseType(CurseReleaseType.valueOf(extension.versionType.toUpperCase()));
 
-        extension.gameVersions.forEach(artifact::addGameVersion);
-        extension.loaders.forEach(artifact::modLoader);
+        // Start super-duper accurate check for CraftPresence... Weirdness xD
+        // Just kidding CDA. But seriously, you have way too much free time
+        boolean oldVersion = false;
+
+        // Compare if MC version is below 1.0, as the lowest curse supports is 1.0
+        for (String gameVersion : extension.gameVersions) {
+            DefaultArtifactVersion min = new DefaultArtifactVersion("1.0");
+            DefaultArtifactVersion current = new DefaultArtifactVersion(gameVersion);
+
+            // Version is lower, so default to 1.0
+            if (current.compareTo(min) < 0) {
+                oldVersion = true;
+                artifact.addGameVersion("1.0");
+            } else {
+                // No change needed, pass game version as-is
+                artifact.addGameVersion(gameVersion);
+            }
+        }
+
+        for (String modLoader : extension.loaders) {
+            // MC Version below 1.0 was detected, so ignore loader field
+            if (oldVersion)
+                continue;
+
+            // MC Version newer than 1.0 detected, so replace modloader with forge
+            if (modLoader.equalsIgnoreCase("modloader")) {
+                artifact.modLoader("forge");
+            } else {
+                // No changes needed, pass the modloader along
+                artifact.modLoader(modLoader);
+            }
+        }
+        // Back to our regularly scheduled code
 
         if (extension.displayName != null && !extension.displayName.isEmpty()) {
             artifact.displayName(extension.displayName);

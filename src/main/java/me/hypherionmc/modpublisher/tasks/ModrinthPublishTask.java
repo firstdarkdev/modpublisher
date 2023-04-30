@@ -30,10 +30,11 @@ import masecla.modrinth4j.endpoints.version.CreateVersion;
 import masecla.modrinth4j.main.ModrinthAPI;
 import masecla.modrinth4j.model.version.ProjectVersion;
 import me.hypherionmc.modpublisher.util.CommonUtil;
+import me.hypherionmc.modpublisher.util.UploadPreChecks;
+import org.gradle.api.DefaultTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
  * Sub-Task to handle Modrinth publishing. This task will only be executed if
  * a Modrinth API Key and Project ID is supplied
  */
-public class ModrinthPublishTask {
+public class ModrinthPublishTask extends DefaultTask {
 
     // Instance of Modrinth4J that will be used
     private final ModrinthAPI modrinthAPI;
@@ -62,8 +63,12 @@ public class ModrinthPublishTask {
         modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.apiKeys.modrinth);
     }
 
-    public void upload() throws IOException {
+    public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to Modrinth");
+        UploadPreChecks.checkRequiredValues();
+        boolean canUpload = UploadPreChecks.canUploadModrinth();
+        if (!canUpload)
+            return;
 
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 
