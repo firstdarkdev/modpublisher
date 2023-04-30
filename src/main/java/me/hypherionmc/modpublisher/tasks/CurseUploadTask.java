@@ -47,15 +47,7 @@ import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
 public class CurseUploadTask extends DefaultTask {
 
     // Instance of CurseUpload4J to use
-    private final CurseUploadApi uploadApi;
-
-    public CurseUploadTask() {
-        // Create the API Client and pass the Gradle logger as logger
-        uploadApi = new CurseUploadApi(extension.apiKeys.curseforge, project.getLogger());
-
-        // Enable debug mode if required
-        uploadApi.setDebug(extension.debug);
-    }
+    private CurseUploadApi uploadApi;
 
     /**
      * Configure the upload and upload it
@@ -67,6 +59,12 @@ public class CurseUploadTask extends DefaultTask {
         boolean canUpload = UploadPreChecks.canUploadCurse();
         if (!canUpload)
             return;
+
+        // Create the API Client and pass the Gradle logger as logger
+        uploadApi = new CurseUploadApi(extension.apiKeys.curseforge, project.getLogger());
+
+        // Enable debug mode if required
+        uploadApi.setDebug(extension.debug);
 
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 

@@ -48,9 +48,19 @@ import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
 public class GithubUploadTask extends DefaultTask {
 
     // Instance of HUB4J to handle GitHub API communications
-    private final GitHub gitHub;
+    private GitHub gitHub;
 
-    public GithubUploadTask() throws IOException {
+    /**
+     * Configure the upload and upload it
+     */
+    @TaskAction
+    public void upload() throws Exception {
+        project.getLogger().lifecycle("Uploading to GitHub");
+        UploadPreChecks.checkRequiredValues();
+        boolean canUpload = UploadPreChecks.canUploadGitHub();
+        if (!canUpload)
+            return;
+
         // Create an HTTP Client with UserAgent and longer timeouts
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .callTimeout(1, TimeUnit.MINUTES)
@@ -63,18 +73,6 @@ public class GithubUploadTask extends DefaultTask {
         gitHub = new GitHubBuilder()
                 .withOAuthToken(extension.apiKeys.github)
                 .withConnector(new OkHttpGitHubConnector(client)).build();
-    }
-
-    /**
-     * Configure the upload and upload it
-     */
-    @TaskAction
-    public void upload() throws Exception {
-        project.getLogger().lifecycle("Uploading to GitHub");
-        UploadPreChecks.checkRequiredValues();
-        boolean canUpload = UploadPreChecks.canUploadGitHub();
-        if (!canUpload)
-            return;
 
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 

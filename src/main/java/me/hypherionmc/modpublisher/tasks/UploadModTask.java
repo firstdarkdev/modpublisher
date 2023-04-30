@@ -23,7 +23,6 @@
  */
 package me.hypherionmc.modpublisher.tasks;
 
-import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
@@ -36,20 +35,7 @@ public class UploadModTask extends DefaultTask {
 
     @TaskAction
     void uploadArtifacts() throws Exception {
-        if (UploadPreChecks.canUploadModrinth()) {
-            ModrinthPublishTask modrinthPublishTask = new ModrinthPublishTask();
-            modrinthPublishTask.upload();
-        }
-
-        if (UploadPreChecks.canUploadCurse()) {
-            CurseUploadTask curseUploadTask = new CurseUploadTask();
-            curseUploadTask.upload();
-        }
-
-        if (UploadPreChecks.canUploadGitHub()) {
-            GithubUploadTask githubUploadTask = new GithubUploadTask();
-            githubUploadTask.upload();
-        }
+        getProject().getLogger().lifecycle("Published mod to all configured platforms");
     }
 
 }

@@ -32,6 +32,7 @@ import masecla.modrinth4j.model.version.ProjectVersion;
 import me.hypherionmc.modpublisher.util.CommonUtil;
 import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,9 +50,19 @@ import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
 public class ModrinthPublishTask extends DefaultTask {
 
     // Instance of Modrinth4J that will be used
-    private final ModrinthAPI modrinthAPI;
+    private ModrinthAPI modrinthAPI;
 
-    public ModrinthPublishTask() {
+    /**
+     * Configure the upload and upload it
+     */
+    @TaskAction
+    public void upload() throws Exception {
+        project.getLogger().lifecycle("Uploading to Modrinth");
+        UploadPreChecks.checkRequiredValues();
+        boolean canUpload = UploadPreChecks.canUploadModrinth();
+        if (!canUpload)
+            return;
+
         // Required User Agent
         UserAgent.UserAgentBuilder userAgent = UserAgent.builder();
         userAgent.authorUsername("HypherionSA");
@@ -61,14 +72,6 @@ public class ModrinthPublishTask extends DefaultTask {
 
         // Create the API Client
         modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.apiKeys.modrinth);
-    }
-
-    public void upload() throws Exception {
-        project.getLogger().lifecycle("Uploading to Modrinth");
-        UploadPreChecks.checkRequiredValues();
-        boolean canUpload = UploadPreChecks.canUploadModrinth();
-        if (!canUpload)
-            return;
 
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 

@@ -30,6 +30,9 @@ public class UploadPreChecks {
     }
 
     public static boolean canUploadCurse() throws Exception {
+        if (extension == null)
+            return false;
+
         // Check that both the Curseforge API key and Project ID is defined
         if (extension.apiKeys.curseforge != null && !extension.apiKeys.curseforge.isEmpty()) {
             if (extension.curseID == null || extension.curseID.isEmpty()) {
@@ -42,6 +45,9 @@ public class UploadPreChecks {
     }
 
     public static boolean canUploadModrinth() throws Exception {
+        if (extension == null)
+            return false;
+
         checkVersion();
         // Check that both the Modrinth API key and Project ID is defined
         if (extension.apiKeys.modrinth != null && !extension.apiKeys.modrinth.isEmpty()) {
@@ -55,6 +61,9 @@ public class UploadPreChecks {
     }
 
     public static boolean canUploadGitHub() throws Exception {
+        if (extension == null)
+            return false;
+
         checkVersion();
         if (extension.apiKeys.github != null && !extension.apiKeys.github.isEmpty()) {
             if (extension.githubRepo == null || extension.githubRepo.isEmpty()) {

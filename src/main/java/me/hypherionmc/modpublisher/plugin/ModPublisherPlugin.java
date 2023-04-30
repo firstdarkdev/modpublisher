@@ -27,6 +27,7 @@ import me.hypherionmc.modpublisher.tasks.CurseUploadTask;
 import me.hypherionmc.modpublisher.tasks.GithubUploadTask;
 import me.hypherionmc.modpublisher.tasks.ModrinthPublishTask;
 import me.hypherionmc.modpublisher.tasks.UploadModTask;
+import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -52,6 +53,9 @@ public class ModPublisherPlugin implements Plugin<Project> {
     public void apply(@Nonnull Project project) {
         ModPublisherPlugin.project = project;
 
+        // Create the configuration extension
+        extension = project.getExtensions().create(EXTENSION_NAME, ModPublisherGradleExtension.class);
+
         // Create the upload tasks
         final Task uploadTask = project.getTasks().create(TASK_NAME, UploadModTask.class);
         uploadTask.setDescription("Upload your mod to configured platforms");
@@ -66,10 +70,27 @@ public class ModPublisherPlugin implements Plugin<Project> {
         gitHubUploadTask.setGroup(TASK_GROUP);
 
         final Task modrinthUploadTask = project.getTasks().create(MODRINTH_TASK, ModrinthPublishTask.class);
-        gitHubUploadTask.setDescription("Upload your mod to Modrinth");
-        gitHubUploadTask.setGroup(TASK_GROUP);
+        modrinthUploadTask.setDescription("Upload your mod to Modrinth");
+        modrinthUploadTask.setGroup(TASK_GROUP);
 
-        // Create the configuration extension
-        extension = project.getExtensions().create(EXTENSION_NAME, ModPublisherGradleExtension.class);
+        project.afterEvaluate(c -> {
+            try {
+                if (UploadPreChecks.canUploadCurse()) {
+                    uploadTask.dependsOn(curseUploadTask);
+                }
+            } catch (Exception ignored) {}
+
+            try {
+                if (UploadPreChecks.canUploadModrinth()) {
+                    uploadTask.dependsOn(modrinthUploadTask);
+                }
+            } catch (Exception ignored) {}
+
+            try {
+                if (UploadPreChecks.canUploadGitHub()) {
+                    uploadTask.dependsOn(gitHubUploadTask);
+                }
+            } catch (Exception ignored) {}
+        });
     }
 }
