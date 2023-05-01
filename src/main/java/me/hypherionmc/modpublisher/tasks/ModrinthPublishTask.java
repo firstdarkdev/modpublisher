@@ -91,7 +91,14 @@ public class ModrinthPublishTask extends DefaultTask {
             builder.name(extension.version);
         }
 
-        builder.gameVersions(extension.gameVersions);
+        List<String> finalGameVersions = new ArrayList<>();
+        for (String gameVersion : extension.gameVersions) {
+            if (gameVersion.endsWith("-snapshot"))
+                continue;
+            finalGameVersions.add(gameVersion);
+        }
+
+        builder.gameVersions(finalGameVersions);
         builder.loaders(extension.loaders);
 
         if (extension.modrinthDepends != null) {

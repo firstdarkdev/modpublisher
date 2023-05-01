@@ -35,6 +35,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.regex.Pattern;
 
 import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
 import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
@@ -48,6 +49,7 @@ public class CurseUploadTask extends DefaultTask {
 
     // Instance of CurseUpload4J to use
     private CurseUploadApi uploadApi;
+    private final Pattern pattern = Pattern.compile("[A-Za-z0-9]+", Pattern.CASE_INSENSITIVE);
 
     /**
      * Configure the upload and upload it
@@ -82,6 +84,9 @@ public class CurseUploadTask extends DefaultTask {
 
         // Compare if MC version is below 1.0, as the lowest curse supports is 1.0
         for (String gameVersion : extension.gameVersions) {
+            if (pattern.matcher(gameVersion).matches())
+                continue;
+
             DefaultArtifactVersion min = new DefaultArtifactVersion("1.0");
             DefaultArtifactVersion current = new DefaultArtifactVersion(gameVersion);
 
