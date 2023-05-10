@@ -87,6 +87,9 @@ public class CurseUploadTask extends DefaultTask {
             if (pattern.matcher(gameVersion).matches())
                 continue;
 
+            if (gameVersion.contains("-pre") || gameVersion.contains("-rc"))
+                continue;
+
             DefaultArtifactVersion min = new DefaultArtifactVersion("1.0");
             DefaultArtifactVersion current = new DefaultArtifactVersion(gameVersion);
 
