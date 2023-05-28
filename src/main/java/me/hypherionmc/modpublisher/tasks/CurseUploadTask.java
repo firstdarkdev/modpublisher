@@ -103,6 +103,25 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
+        // Add Curse Environment tags if they are specified
+        if (extension.curseEnvironment != null && !extension.curseEnvironment.isEmpty()) {
+            String env = extension.curseEnvironment.toLowerCase();
+
+            switch (env) {
+                case "client":
+                    artifact.addGameVersion("client");
+                    break;
+                case "server":
+                    artifact.addGameVersion("server");
+                    break;
+                default:
+                case "both":
+                    artifact.addGameVersion("client");
+                    artifact.addGameVersion("server");
+                    break;
+            }
+        }
+
         for (String modLoader : extension.loaders) {
             // MC Version below 1.0 was detected, so ignore loader field
             if (oldVersion)

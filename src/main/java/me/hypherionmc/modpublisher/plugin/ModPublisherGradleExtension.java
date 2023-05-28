@@ -68,6 +68,9 @@ public class ModPublisherGradleExtension {
     // Modloaders supported by this upload
     public List<String> loaders = new ArrayList<>();
 
+    // New Curseforge Environment Tag. CLIENT, SERVER or BOTH
+    public String curseEnvironment;
+
     // The file, or string location of the file that will be uploaded
     public Object artifact;
 
