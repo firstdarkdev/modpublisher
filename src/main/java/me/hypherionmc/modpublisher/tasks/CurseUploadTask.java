@@ -80,9 +80,8 @@ public class CurseUploadTask extends DefaultTask {
 
         // Start super-duper accurate check for CraftPresence... Weirdness xD
         // Just kidding CDA. But seriously, you have way too much free time
-        boolean oldVersion = false;
 
-        // Compare if MC version is below 1.0, as the lowest curse supports is 1.0
+        // Compare if MC version is below b1.6.6, as the lowest curse supports is b1.6.6
         for (String gameVersion : extension.gameVersions) {
             if (pattern.matcher(gameVersion).matches())
                 continue;
@@ -90,18 +89,33 @@ public class CurseUploadTask extends DefaultTask {
             if (gameVersion.contains("-pre") || gameVersion.contains("-rc"))
                 continue;
 
-            DefaultArtifactVersion min = new DefaultArtifactVersion("1.0");
+            DefaultArtifactVersion min = new DefaultArtifactVersion("b1.6.6");
             DefaultArtifactVersion current = new DefaultArtifactVersion(gameVersion);
 
-            // Version is lower, so default to 1.0
+            // Version is lower, so default to b1.6.6
             if (current.compareTo(min) < 0) {
-                oldVersion = true;
-                artifact.addGameVersion("1.0");
+                artifact.addGameVersion("beta-1-6-6");
+            } else if (gameVersion.contains("b1")) {
+                // Convert into curseforge slug format
+                String ver = gameVersion.replace("b", "").replace(".", "-");
+                artifact.addGameVersion(ver);
             } else {
                 // No change needed, pass game version as-is
                 artifact.addGameVersion(gameVersion);
             }
         }
+
+        for (String modLoader : extension.loaders) {
+
+            // Replace `modloader` with `risugamis-modloader`
+            if (modLoader.equalsIgnoreCase("modloader")) {
+                artifact.modLoader("risugamis-modloader");
+            } else {
+                // No changes needed, pass the modloader along
+                artifact.modLoader(modLoader);
+            }
+        }
+        // Back to our regularly scheduled code
 
         // Add Curse Environment tags if they are specified
         if (extension.curseEnvironment != null && !extension.curseEnvironment.isEmpty()) {
@@ -121,21 +135,6 @@ public class CurseUploadTask extends DefaultTask {
                     break;
             }
         }
-
-        for (String modLoader : extension.loaders) {
-            // MC Version below 1.0 was detected, so ignore loader field
-            if (oldVersion)
-                continue;
-
-            // MC Version newer than 1.0 detected, so replace modloader with forge
-            if (modLoader.equalsIgnoreCase("modloader")) {
-                artifact.modLoader("forge");
-            } else {
-                // No changes needed, pass the modloader along
-                artifact.modLoader(modLoader);
-            }
-        }
-        // Back to our regularly scheduled code
 
         if (extension.displayName != null && !extension.displayName.isEmpty()) {
             artifact.displayName(extension.displayName);
