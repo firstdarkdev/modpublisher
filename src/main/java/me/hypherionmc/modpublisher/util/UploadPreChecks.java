@@ -23,6 +23,9 @@
  */
 package me.hypherionmc.modpublisher.util;
 
+import me.hypherionmc.modpublisher.plugin.ModPublisherPlugin;
+import me.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
+
 import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
 
 public class UploadPreChecks {
@@ -43,6 +46,10 @@ public class UploadPreChecks {
 
         if (extension.loaders.isEmpty()) {
             throw new Exception("loaders is not defined. This is required");
+        }
+
+        if (!extension.disableMalwareScanner) {
+            JarInfectionScanner.scan(ModPublisherPlugin.project, extension.artifact);
         }
     }
 

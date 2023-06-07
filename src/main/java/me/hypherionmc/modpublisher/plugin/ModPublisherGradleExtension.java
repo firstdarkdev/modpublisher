@@ -80,6 +80,9 @@ public class ModPublisherGradleExtension {
     // Control Modrinth Dependencies
     public Dependencies modrinthDepends;
 
+    // Disable Jar Scanning
+    public boolean disableMalwareScanner = false;
+
     /**
      * Configure API Keys for this Project
      */

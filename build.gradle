@@ -38,6 +38,8 @@ dependencies {
     shadeMe "org.kohsuke:github-api:1.314"
     shadeMe "org.apache.maven:maven-artifact:4.0.0-alpha-5"
 
+    shadeMe 'org.ow2.asm:asm:9.5'
+    shadeMe 'org.ow2.asm:asm-tree:9.5'
 }
 
 shadowJar {
@@ -81,7 +83,7 @@ jar {
 
 spotless {
     java {
-        targetExclude("src/test/**")
+        targetExclude("src/test/**", "src/main/java/me/hypherionmc/modpublisher/util/scanner/**")
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
     }
 }
