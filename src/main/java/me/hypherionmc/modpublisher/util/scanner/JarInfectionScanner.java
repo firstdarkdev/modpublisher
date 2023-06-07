@@ -1,6 +1,5 @@
 package me.hypherionmc.modpublisher.util.scanner;
 
-import me.hypherionmc.modpublisher.plugin.ModPublisherPlugin;
 import me.hypherionmc.modpublisher.util.CommonUtil;
 import org.gradle.api.Project;
 import org.objectweb.asm.ClassReader;
@@ -26,13 +25,14 @@ public class JarInfectionScanner {
         File jarFile = CommonUtil.resolveFile(project, file);
 
         if (jarFile != null) {
+            project.getLogger().lifecycle("Scanning {} for presence of fractureiser", jarFile.getAbsolutePath());
             ZipFile zipFile = new ZipFile(jarFile);
-            scan(zipFile);
+            scan(zipFile, project);
             zipFile.close();
         }
     }
 
-    private static void scan(ZipFile file) {
+    private static void scan(ZipFile file, Project project) {
         try {
             boolean matches = file.stream()
                     .filter(entry -> entry.getName().endsWith(".class"))
@@ -50,9 +50,9 @@ public class JarInfectionScanner {
             }
             if (!matches)
                 return;
-            throw new Exception("!!!! " + file.getName() + " is infected");
+            throw new Exception("!!!! " + file.getName() + " is infected with fractureiser");
         } catch (Exception e) {
-            ModPublisherPlugin.project.getLogger().error("Failed to scan {}", file.getName(), e);
+            project.getLogger().error("Failed to scan {}", file.getName(), e);
         }
     }
 
