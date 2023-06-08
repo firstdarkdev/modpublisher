@@ -99,7 +99,18 @@ public class ModrinthPublishTask extends DefaultTask {
         }
 
         builder.gameVersions(finalGameVersions);
-        builder.loaders(extension.loaders);
+
+        List<String> finalLoaders = new ArrayList<>();
+        for (String loader : extension.loaders) {
+            if (loader.equalsIgnoreCase("risugami's modloader")) {
+                if (!finalLoaders.contains("modloader"))
+                    finalLoaders.add("modloader");
+                continue;
+            }
+
+            finalLoaders.add(loader);
+        }
+        builder.loaders(finalLoaders);
 
         if (extension.modrinthDepends != null) {
             List<ProjectVersion.ProjectDependency> dependencies = new ArrayList<>();

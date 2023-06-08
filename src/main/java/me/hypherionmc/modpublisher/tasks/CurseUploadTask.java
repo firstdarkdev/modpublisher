@@ -94,10 +94,10 @@ public class CurseUploadTask extends DefaultTask {
 
             // Version is lower, so default to b1.6.6
             if (current.compareTo(min) < 0) {
-                artifact.addGameVersion("beta-1-6-6");
+                artifact.addGameVersion("beta 1.6.6");
             } else if (gameVersion.contains("b1")) {
                 // Convert into curseforge slug format
-                String ver = gameVersion.replace("b", "").replace(".", "-");
+                String ver = gameVersion.replace("b", "beta ");
                 artifact.addGameVersion(ver);
             } else {
                 // No change needed, pass game version as-is
@@ -109,7 +109,7 @@ public class CurseUploadTask extends DefaultTask {
 
             // Replace `modloader` with `risugamis-modloader`
             if (modLoader.equalsIgnoreCase("modloader")) {
-                artifact.modLoader("risugamis-modloader");
+                artifact.modLoader("risugami's modloader");
             } else {
                 // No changes needed, pass the modloader along
                 artifact.modLoader(modLoader);
