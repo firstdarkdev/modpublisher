@@ -137,6 +137,8 @@ public class ModrinthPublishTask extends DefaultTask {
             return;
         }
 
+        UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
+
         ProjectVersion projectVersion = modrinthAPI.versions().createProjectVersion(builder.build()).join();
 
         project.getLogger().lifecycle(

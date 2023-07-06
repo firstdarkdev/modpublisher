@@ -66,6 +66,9 @@ public class ModPublisherGradleExtension {
     // Disable Jar Scanning
     public boolean disableMalwareScanner = false;
 
+    // Disable Empty Jar Checker
+    public boolean disableEmptyJarCheck = false;
+
     /**
      * Configure API Keys for this Project
      */

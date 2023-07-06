@@ -8,6 +8,11 @@ package me.hypherionmc.modpublisher.util;
 
 import me.hypherionmc.modpublisher.plugin.ModPublisherPlugin;
 import me.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
+import org.gradle.api.GradleException;
+
+import java.io.File;
+import java.nio.file.*;
+import java.util.List;
 
 import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
 
@@ -88,4 +93,33 @@ public class UploadPreChecks {
         return false;
     }
 
+    public static void checkEmptyJar(File file, List<String> loaderVersions) throws Exception {
+        if (extension.disableEmptyJarCheck)
+            return;
+
+        FileSystem system = FileSystems.newFileSystem(Paths.get(file.getPath()), null);
+        Path quiltJson = system.getPath("quilt.mod.json");
+        Path fabricJson = system.getPath("fabric.mod.json");
+        Path forgeToml = system.getPath("META-INF/mods.toml");
+        Path forgeMc = system.getPath("mcmod.info");
+
+        if (loaderVersions.contains("forge")) {
+            // Check for either mods.toml or mcmod.info (for older version support)
+            if (!Files.exists(forgeToml) && !Files.exists(forgeMc))
+                throw new GradleException("File marked as forge, but no mods.toml or mcmod.info file was found");
+        }
+
+        if (loaderVersions.contains("fabric")) {
+            if (!Files.exists(fabricJson))
+                throw new GradleException("File marked as fabric, but no fabric.mod.json file was found");
+        }
+
+        if (loaderVersions.contains("quilt")) {
+            // Fabric mods can run on quilt, so we check for either of the files to be present
+            if (!Files.exists(quiltJson) && !Files.exists(fabricJson))
+                throw new GradleException("File marked as quilt, but no quilt.mod.json OR fabric.mod.json file was found");
+        }
+
+        system.close();
+    }
 }

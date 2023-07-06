@@ -132,6 +132,8 @@ public class CurseUploadTask extends DefaultTask {
             extension.curseDepends.embedded.forEach(artifact::embedded);
         }
 
+        UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
+
         // If debug mode is enabled, this will only log the JSON that will be sent and
         // will not actually upload the file
         uploadApi.upload(artifact);

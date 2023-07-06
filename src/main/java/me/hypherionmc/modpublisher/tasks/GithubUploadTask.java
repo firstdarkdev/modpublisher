@@ -80,6 +80,8 @@ public class GithubUploadTask extends DefaultTask {
             return;
         }
 
+        UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
+
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {
             GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, extension.version);
