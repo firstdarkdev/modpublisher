@@ -69,6 +69,9 @@ public class ModPublisherGradleExtension {
     // Disable Empty Jar Checker
     public boolean disableEmptyJarCheck = false;
 
+    // Allow uploads to modrinth staging
+    public boolean useModrinthStaging = false;
+
     /**
      * Configure API Keys for this Project
      */

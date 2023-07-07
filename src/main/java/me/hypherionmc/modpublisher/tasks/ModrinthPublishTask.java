@@ -12,6 +12,7 @@ import masecla.modrinth4j.client.agent.UserAgent;
 import masecla.modrinth4j.endpoints.version.CreateVersion;
 import masecla.modrinth4j.main.ModrinthAPI;
 import masecla.modrinth4j.model.version.ProjectVersion;
+import me.hypherionmc.modpublisher.Constants;
 import me.hypherionmc.modpublisher.util.CommonUtil;
 import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.DefaultTask;
@@ -54,7 +55,7 @@ public class ModrinthPublishTask extends DefaultTask {
         userAgent.projectVersion("v1");
 
         // Create the API Client
-        modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.apiKeys.modrinth);
+        modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.useModrinthStaging ? Constants.MODRINTH_STAGING_API : Constants.MODRINTH_API, extension.apiKeys.modrinth);
 
         File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
 

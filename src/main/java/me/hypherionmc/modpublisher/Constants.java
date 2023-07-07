@@ -19,4 +19,6 @@ public class Constants {
     public static final String TASK_GROUP = "publishing";
     public static final String EXTENSION_NAME = "publisher";
 
+    public static final String MODRINTH_API = "https://api.modrinth.com/v2";
+    public static final String MODRINTH_STAGING_API = "https://staging-api.modrinth.com/v2";
 }
