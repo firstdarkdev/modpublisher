@@ -106,6 +106,12 @@ public class GithubUploadTask extends DefaultTask {
         if (asset == null)
             throw new IOException("Failed to upload release to github. No error found");
 
+        if (!extension.additionalFiles.isEmpty()) {
+            for (Object file : extension.additionalFiles) {
+                ghRelease.uploadAsset(CommonUtil.resolveFile(project, file), "application/octet-stream");
+            }
+        }
+
         // Mark Release as PRE-RELEASE if alpha or beta
         // Actually publish the release if a brand new one was created
         GHReleaseUpdater releaseUpdater = ghRelease.update();

@@ -132,6 +132,12 @@ public class CurseUploadTask extends DefaultTask {
             extension.curseDepends.embedded.forEach(artifact::embedded);
         }
 
+        if (!extension.additionalFiles.isEmpty()) {
+            for (Object file : extension.additionalFiles) {
+                artifact.addAdditionalFile(CommonUtil.resolveFile(project, file));
+            }
+        }
+
         UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
 
         // If debug mode is enabled, this will only log the JSON that will be sent and

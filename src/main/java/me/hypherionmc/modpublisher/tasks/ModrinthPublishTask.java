@@ -62,12 +62,13 @@ public class ModrinthPublishTask extends DefaultTask {
         if (uploadFile == null || !uploadFile.exists())
             throw new FileNotFoundException("Cannot find file " + extension.artifact.toString());
 
+        final List<File> uploadFiles = new ArrayList<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();
         builder.projectId(extension.modrinthID);
         builder.changelog(CommonUtil.resolveString(extension.changelog));
         builder.versionType(ProjectVersion.VersionType.valueOf(extension.versionType.toUpperCase()));
         builder.versionNumber(extension.version);
-        builder.files(uploadFile);
+        uploadFiles.add(uploadFile);
 
         if (extension.displayName != null && !extension.displayName.isEmpty()) {
             builder.name(extension.displayName);
@@ -130,6 +131,13 @@ public class ModrinthPublishTask extends DefaultTask {
                 builder.dependencies(dependencies);
             }
         }
+
+        if (!extension.additionalFiles.isEmpty()) {
+            for (Object file : extension.additionalFiles) {
+                uploadFiles.add(CommonUtil.resolveFile(project, file));
+            }
+        }
+        builder.files(uploadFiles);
 
         // Debug mode, so we do not upload the file
         if (extension.debug) {

@@ -72,6 +72,9 @@ public class ModPublisherGradleExtension {
     // Allow uploads to modrinth staging
     public boolean useModrinthStaging = false;
 
+    // Allow uploading additional files
+    public List<Object> additionalFiles = new ArrayList<>();
+
     /**
      * Configure API Keys for this Project
      */
