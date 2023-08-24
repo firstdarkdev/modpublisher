@@ -95,7 +95,9 @@ public class ModrinthPublishTask extends DefaultTask {
 
             finalLoaders.add(loader);
         }
-        builder.loaders(finalLoaders);
+
+        if (!finalLoaders.isEmpty())
+            builder.loaders(finalLoaders);
 
         if (extension.modrinthDepends != null) {
             List<ProjectVersion.ProjectDependency> dependencies = new ArrayList<>();

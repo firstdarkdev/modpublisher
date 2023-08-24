@@ -32,10 +32,6 @@ public class UploadPreChecks {
             throw new Exception("gameVersions is not defined. This is required");
         }
 
-        if (extension.loaders.isEmpty()) {
-            throw new Exception("loaders is not defined. This is required");
-        }
-
         if (!extension.disableMalwareScanner) {
             JarInfectionScanner.scan(ModPublisherPlugin.project, extension.artifact);
         }
@@ -95,6 +91,9 @@ public class UploadPreChecks {
 
     public static void checkEmptyJar(File file, List<String> loaderVersions) throws Exception {
         if (extension.disableEmptyJarCheck)
+            return;
+
+        if (loaderVersions.isEmpty())
             return;
 
         FileSystem system = FileSystems.newFileSystem(Paths.get(file.getPath()), null);
