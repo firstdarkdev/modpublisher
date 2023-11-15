@@ -7,6 +7,7 @@
 package me.hypherionmc.modpublisher.util;
 
 import groovy.lang.Closure;
+import me.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -50,8 +51,18 @@ public class CommonUtil {
             obj = ((Closure<?>)obj).call();
         }
 
-        if (obj instanceof String)
-            return (String) obj;
+        if (obj instanceof String) {
+            String val = (String) obj;
+
+            if (val.startsWith("http://") || val.startsWith("https://")) {
+                val = ChangelogUtil.readFromUrl(val);
+            }
+
+            if (val == null)
+                return (String) obj;
+
+            return val;
+        }
 
         if (obj instanceof File) {
             return FileUtils.readFileToString((File) obj, StandardCharsets.UTF_8);
