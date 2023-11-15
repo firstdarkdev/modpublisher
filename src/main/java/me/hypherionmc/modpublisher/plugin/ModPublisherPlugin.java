@@ -11,9 +11,12 @@ import me.hypherionmc.modpublisher.tasks.GithubUploadTask;
 import me.hypherionmc.modpublisher.tasks.ModrinthPublishTask;
 import me.hypherionmc.modpublisher.tasks.UploadModTask;
 import me.hypherionmc.modpublisher.util.UploadPreChecks;
+import org.gradle.api.DefaultTask;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.tasks.TaskProvider;
+import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import javax.annotation.Nonnull;
 
@@ -59,21 +62,45 @@ public class ModPublisherPlugin implements Plugin<Project> {
         project.afterEvaluate(c -> {
             try {
                 if (UploadPreChecks.canUploadCurse()) {
+                    resolveInputTask(project, extension.artifact, curseUploadTask);
                     uploadTask.dependsOn(curseUploadTask);
                 }
             } catch (Exception ignored) {}
 
             try {
                 if (UploadPreChecks.canUploadModrinth()) {
+                    resolveInputTask(project, extension.artifact, modrinthUploadTask);
                     uploadTask.dependsOn(modrinthUploadTask);
                 }
             } catch (Exception ignored) {}
 
             try {
                 if (UploadPreChecks.canUploadGitHub()) {
+                    resolveInputTask(project, extension.artifact, gitHubUploadTask);
                     uploadTask.dependsOn(gitHubUploadTask);
                 }
             } catch (Exception ignored) {}
         });
+    }
+
+    private void resolveInputTask(Project project, Object inTask, Task mainTask) {
+        if (project == null || inTask == null || mainTask == null)
+            return;
+
+        Task task = null;
+
+        if (inTask instanceof String) {
+            task = project.getTasks().getByName((String) inTask);
+        }
+
+        if (!(task instanceof AbstractArchiveTask))
+            return;
+
+        if (task == null)
+            return;
+
+        String taskName = "prepare" + mainTask.getName() + "upload" + project.getName();
+        project.task(taskName).dependsOn(":" + project.getName() + ":" + task.getName());
+        mainTask.dependsOn(taskName);
     }
 }

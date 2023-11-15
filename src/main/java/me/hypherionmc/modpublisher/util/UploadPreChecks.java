@@ -102,10 +102,10 @@ public class UploadPreChecks {
         Path forgeToml = system.getPath("META-INF/mods.toml");
         Path forgeMc = system.getPath("mcmod.info");
 
-        if (loaderVersions.contains("forge")) {
+        if (loaderVersions.contains("forge") || loaderVersions.contains("neoforge")) {
             // Check for either mods.toml or mcmod.info (for older version support)
             if (!Files.exists(forgeToml) && !Files.exists(forgeMc))
-                throw new GradleException("File marked as forge, but no mods.toml or mcmod.info file was found");
+                throw new GradleException("File marked as forge/neoforge, but no mods.toml or mcmod.info file was found");
         }
 
         if (loaderVersions.contains("fabric")) {
