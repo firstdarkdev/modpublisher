@@ -71,8 +71,6 @@ public class ModrinthPublishTask extends DefaultTask {
         if (uploadFile == null || !uploadFile.exists())
             throw new FileNotFoundException("Cannot find file " + extension.artifact.toString());
 
-        getLogger().lifecycle("File: " + uploadFile.getAbsolutePath());
-
         final List<File> uploadFiles = new ArrayList<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();
         builder.projectId(extension.modrinthID);
