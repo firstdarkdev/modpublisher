@@ -95,7 +95,7 @@ public class ModPublisherPlugin implements Plugin<Project> {
             return;
 
         String taskName = "prepare" + mainTask.getName() + "upload" + project.getName();
-        project.task(taskName).dependsOn(":" + project.getName() + ":" + task.getName());
+        project.task(taskName).dependsOn(task);
         mainTask.dependsOn(taskName);
     }
 }
