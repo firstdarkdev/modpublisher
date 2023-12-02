@@ -10,18 +10,18 @@ import me.hypherionmc.curseupload.CurseUploadApi;
 import me.hypherionmc.curseupload.constants.CurseChangelogType;
 import me.hypherionmc.curseupload.constants.CurseReleaseType;
 import me.hypherionmc.curseupload.requests.CurseArtifact;
+import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import me.hypherionmc.modpublisher.util.CommonUtil;
 import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
-
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
 
 /**
  * @author HypherionSA
@@ -34,14 +34,23 @@ public class CurseUploadTask extends DefaultTask {
     private CurseUploadApi uploadApi;
     private final Pattern pattern = Pattern.compile("[A-Za-z0-9]+", Pattern.CASE_INSENSITIVE);
 
+    private final Project project;
+    private final ModPublisherGradleExtension extension;
+
+    @Inject
+    public CurseUploadTask(Project project, ModPublisherGradleExtension extension) {
+        this.project = project;
+        this.extension = extension;
+    }
+
     /**
      * Configure the upload and upload it
      */
     @TaskAction
     public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to Curseforge");
-        UploadPreChecks.checkRequiredValues();
-        boolean canUpload = UploadPreChecks.canUploadCurse();
+        UploadPreChecks.checkRequiredValues(project, extension);
+        boolean canUpload = UploadPreChecks.canUploadCurse(project, extension);
         if (!canUpload)
             return;
 
@@ -138,7 +147,7 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
-        UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
+        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.loaders);
 
         // If debug mode is enabled, this will only log the JSON that will be sent and
         // will not actually upload the file

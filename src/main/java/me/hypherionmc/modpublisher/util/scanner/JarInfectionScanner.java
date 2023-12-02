@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 import static org.objectweb.asm.Opcodes.*;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 
 /**
  * @author HypherionSA

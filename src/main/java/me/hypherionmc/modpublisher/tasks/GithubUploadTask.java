@@ -6,23 +6,22 @@
  */
 package me.hypherionmc.modpublisher.tasks;
 
+import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import me.hypherionmc.modpublisher.util.CommonUtil;
 import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import me.hypherionmc.modpublisher.util.UserAgentInterceptor;
 import okhttp3.OkHttpClient;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 import org.kohsuke.github.*;
 import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
-
 /**
  * @author HypherionSA
  * Sub-Task to handle GitHub publishing. This task will only be executed if
@@ -33,14 +32,23 @@ public class GithubUploadTask extends DefaultTask {
     // Instance of HUB4J to handle GitHub API communications
     private GitHub gitHub;
 
+    private final Project project;
+    private final ModPublisherGradleExtension extension;
+
+    @Inject
+    public GithubUploadTask(Project project, ModPublisherGradleExtension extension) {
+        this.project = project;
+        this.extension = extension;
+    }
+
     /**
      * Configure the upload and upload it
      */
     @TaskAction
     public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to GitHub");
-        UploadPreChecks.checkRequiredValues();
-        boolean canUpload = UploadPreChecks.canUploadGitHub();
+        UploadPreChecks.checkRequiredValues(project, extension);
+        boolean canUpload = UploadPreChecks.canUploadGitHub(project, extension);
         if (!canUpload)
             return;
 
@@ -80,7 +88,7 @@ public class GithubUploadTask extends DefaultTask {
             return;
         }
 
-        UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
+        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.loaders);
 
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {

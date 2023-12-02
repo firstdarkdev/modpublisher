@@ -13,18 +13,18 @@ import masecla.modrinth4j.endpoints.version.CreateVersion;
 import masecla.modrinth4j.main.ModrinthAPI;
 import masecla.modrinth4j.model.version.ProjectVersion;
 import me.hypherionmc.modpublisher.Constants;
+import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import me.hypherionmc.modpublisher.util.CommonUtil;
 import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
+import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.project;
 
 /**
  * @author HypherionSA
@@ -36,14 +36,23 @@ public class ModrinthPublishTask extends DefaultTask {
     // Instance of Modrinth4J that will be used
     private ModrinthAPI modrinthAPI;
 
+    private final Project project;
+    private final ModPublisherGradleExtension extension;
+
+    @Inject
+    public ModrinthPublishTask(Project project, ModPublisherGradleExtension extension) {
+        this.project = project;
+        this.extension = extension;
+    }
+
     /**
      * Configure the upload and upload it
      */
     @TaskAction
     public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to Modrinth");
-        UploadPreChecks.checkRequiredValues();
-        boolean canUpload = UploadPreChecks.canUploadModrinth();
+        UploadPreChecks.checkRequiredValues(project, extension);
+        boolean canUpload = UploadPreChecks.canUploadModrinth(project, extension);
         if (!canUpload)
             return;
 
@@ -61,6 +70,8 @@ public class ModrinthPublishTask extends DefaultTask {
 
         if (uploadFile == null || !uploadFile.exists())
             throw new FileNotFoundException("Cannot find file " + extension.artifact.toString());
+
+        getLogger().lifecycle("File: " + uploadFile.getAbsolutePath());
 
         final List<File> uploadFiles = new ArrayList<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();
@@ -148,8 +159,7 @@ public class ModrinthPublishTask extends DefaultTask {
             return;
         }
 
-        UploadPreChecks.checkEmptyJar(uploadFile, extension.loaders);
-
+        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.loaders);
         ProjectVersion projectVersion = modrinthAPI.versions().createProjectVersion(builder.build()).join();
 
         project.getLogger().lifecycle(

@@ -6,19 +6,18 @@
  */
 package me.hypherionmc.modpublisher.util;
 
-import me.hypherionmc.modpublisher.plugin.ModPublisherPlugin;
+import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import me.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
 import org.gradle.api.GradleException;
+import org.gradle.api.Project;
 
 import java.io.File;
 import java.nio.file.*;
 import java.util.List;
 
-import static me.hypherionmc.modpublisher.plugin.ModPublisherPlugin.extension;
-
 public class UploadPreChecks {
 
-    public static void checkRequiredValues() throws Exception {
+    public static void checkRequiredValues(Project project, ModPublisherGradleExtension extension) throws Exception {
         // Check if API Keys are configured
         if (extension.apiKeys == null) {
             throw new Exception("Missing apiKeys config. Artifacts cannot be uploaded without this");
@@ -33,17 +32,17 @@ public class UploadPreChecks {
         }
 
         if (!extension.disableMalwareScanner) {
-            JarInfectionScanner.scan(ModPublisherPlugin.project, extension.artifact);
+            JarInfectionScanner.scan(project, extension.artifact);
         }
     }
 
-    public static void checkVersion() throws Exception {
+    public static void checkVersion(Project project, ModPublisherGradleExtension extension) throws Exception {
         if (extension.version == null || extension.version.isEmpty()) {
             throw new Exception("Version is not defined. This is REQUIRED by modrinth/github");
         }
     }
 
-    public static boolean canUploadCurse() throws Exception {
+    public static boolean canUploadCurse(Project project, ModPublisherGradleExtension extension) throws Exception {
         if (extension == null)
             return false;
 
@@ -58,11 +57,11 @@ public class UploadPreChecks {
         return false;
     }
 
-    public static boolean canUploadModrinth() throws Exception {
+    public static boolean canUploadModrinth(Project project, ModPublisherGradleExtension extension) throws Exception {
         if (extension == null)
             return false;
 
-        checkVersion();
+        checkVersion(project, extension);
         // Check that both the Modrinth API key and Project ID is defined
         if (extension.apiKeys.modrinth != null && !extension.apiKeys.modrinth.isEmpty()) {
             if (extension.modrinthID == null || extension.modrinthID.isEmpty()) {
@@ -74,11 +73,11 @@ public class UploadPreChecks {
         return false;
     }
 
-    public static boolean canUploadGitHub() throws Exception {
+    public static boolean canUploadGitHub(Project project, ModPublisherGradleExtension extension) throws Exception {
         if (extension == null)
             return false;
 
-        checkVersion();
+        checkVersion(project, extension);
         if (extension.apiKeys.github != null && !extension.apiKeys.github.isEmpty()) {
             if (extension.githubRepo == null || extension.githubRepo.isEmpty()) {
                 throw new Exception("Found GitHub token, but githubRepo is not defined");
@@ -89,7 +88,7 @@ public class UploadPreChecks {
         return false;
     }
 
-    public static void checkEmptyJar(File file, List<String> loaderVersions) throws Exception {
+    public static void checkEmptyJar(ModPublisherGradleExtension extension, File file, List<String> loaderVersions) throws Exception {
         if (extension.disableEmptyJarCheck)
             return;
 

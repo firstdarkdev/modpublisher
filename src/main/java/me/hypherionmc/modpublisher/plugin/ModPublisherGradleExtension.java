@@ -7,6 +7,7 @@
 package me.hypherionmc.modpublisher.plugin;
 
 import groovy.lang.Closure;
+import org.gradle.api.Project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,12 +76,18 @@ public class ModPublisherGradleExtension {
     // Allow uploading additional files
     public List<Object> additionalFiles = new ArrayList<>();
 
+    private final Project project;
+
+    public ModPublisherGradleExtension(Project project) {
+        this.project = project;
+    }
+
     /**
      * Configure API Keys for this Project
      */
     public ApiKeys apiKeys(Closure<ApiKeys> closure) {
         apiKeys = new ApiKeys();
-        ModPublisherPlugin.project.configure(apiKeys, closure);
+        project.configure(apiKeys, closure);
         return apiKeys;
     }
 
@@ -89,7 +96,7 @@ public class ModPublisherGradleExtension {
      */
     public Dependencies curseDepends(Closure<Dependencies> closure) {
         curseDepends = new Dependencies();
-        ModPublisherPlugin.project.configure(curseDepends, closure);
+        project.configure(curseDepends, closure);
         return curseDepends;
     }
 
@@ -98,7 +105,7 @@ public class ModPublisherGradleExtension {
      */
     public Dependencies modrinthDepends(Closure<Dependencies> closure) {
         modrinthDepends = new Dependencies();
-        ModPublisherPlugin.project.configure(modrinthDepends, closure);
+        project.configure(modrinthDepends, closure);
         return modrinthDepends;
     }
 
