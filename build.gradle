@@ -2,9 +2,9 @@ plugins {
     id 'java'
     id 'idea'
     id 'java-gradle-plugin'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id 'com.gradle.plugin-publish' version '1.1.0'
-    id "com.diffplug.spotless" version "6.13.0"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradle.plugin-publish' version '1.2.1'
+    id 'com.diffplug.spotless' version '6.13.0'
 }
 apply plugin: 'maven-publish'
 
@@ -34,15 +34,15 @@ dependencies {
     implementation gradleApi()
 
     shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.9"
-    shadeMe "dev.masecla:Modrinth4J:2.1.0"
-    shadeMe "org.kohsuke:github-api:1.314"
-    shadeMe "org.apache.maven:maven-artifact:4.0.0-alpha-5"
+    shadeMe "dev.masecla:Modrinth4J:2.2.0"
+    shadeMe "org.kohsuke:github-api:1.318"
+    shadeMe "org.apache.maven:maven-artifact:4.0.0-alpha-8"
 
-    shadeMe 'org.ow2.asm:asm:9.5'
-    shadeMe 'org.ow2.asm:asm-tree:9.5'
+    shadeMe 'org.ow2.asm:asm:9.6'
+    shadeMe 'org.ow2.asm:asm-tree:9.6'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
 }
 
 test {
@@ -63,16 +63,11 @@ gradlePlugin {
             displayName = 'ModPublisher'
             version = project.version
             implementationClass = "me.hypherionmc.modpublisher.plugin.ModPublisherPlugin"
+            tags.set(['modrinth', 'publish', 'mods', 'github', 'minecraft', 'curseforge'])
         }
     }
 }
 
-pluginBundle {
-    website = 'https://github.com/firstdarkdev/modpublisher'
-    vcsUrl = 'https://github.com/firstdarkdev/modpublisher'
-    description = 'Gradle plugin to Upload and Publish mods to Curseforge/Github/Modrinth in one go'
-    tags = ['modrinth', 'publish', 'mods', 'github', 'minecraft', 'curseforge']
-}
 
 jar {
     manifest {
