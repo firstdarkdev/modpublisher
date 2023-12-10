@@ -62,7 +62,7 @@ public class GithubUploadTask extends DefaultTask {
         // Try to instantiate the GitHub API.
         // Will throw an error if the Token is invalid
         gitHub = new GitHubBuilder()
-                .withOAuthToken(extension.getApiKeys().get().github)
+                .withOAuthToken(extension.getApiKeys().getGithub())
                 .withConnector(new OkHttpGitHubConnector(client)).build();
 
         File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());

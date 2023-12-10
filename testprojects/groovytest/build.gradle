@@ -1,0 +1,52 @@
+import com.hypherionmc.modpublisher.properties.CurseEnvironment
+import com.hypherionmc.modpublisher.properties.ModLoader
+
+plugins {
+    id 'java'
+    id "com.hypherionmc.modutils.modpublisher"
+}
+
+group = 'me.hypherionmc'
+version = '1.0.18'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+artifacts {
+    archives jar
+}
+
+publisher {
+    apiKeys {
+        modrinth System.getenv("MODRINTH_TOKEN")
+        curseforge System.getenv("CURSE_TOKEN")
+    }
+
+    setDebug(true)
+    setCurseID("1234")
+    setModrinthID("dsgfhs79789")
+    setVersionType("beta")
+    setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/sdlink/combo.md")
+    setVersion("1.20.2-${project.version}")
+    setDisplayName("[1.20.x] Simple Discord Link - ${project.version}")
+    setGameVersions("1.20", "1.20.1", "1.20.2")
+    setLoaders(ModLoader.FABRIC, ModLoader.FORGE)
+    setCurseEnvironment(CurseEnvironment.BOTH)
+    setArtifact(jar)
+    setDisableEmptyJarCheck(true)
+    addAdditionalFile(jar)
+
+    modrinthDepends {
+        required "fabric-api", "craterlib"
+        required "fabric-api"
+    }
+
+    curseDepends {
+        required "fabric-api", "craterlib"
+    }
+}

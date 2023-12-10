@@ -64,7 +64,7 @@ public class ModrinthPublishTask extends DefaultTask {
         userAgent.projectVersion("v1");
 
         // Create the API Client
-        modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.getUseModrinthStaging().get() ? Constants.MODRINTH_STAGING_API : Constants.MODRINTH_API, extension.getApiKeys().get().modrinth);
+        modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.getUseModrinthStaging().get() ? Constants.MODRINTH_STAGING_API : Constants.MODRINTH_API, extension.getApiKeys().getModrinth());
 
         File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
 
@@ -108,30 +108,30 @@ public class ModrinthPublishTask extends DefaultTask {
         if (!finalLoaders.isEmpty())
             builder.loaders(finalLoaders);
 
-        if (extension.getModrinthDepends().isPresent()) {
+        if (extension.getModrinthDepends() != null) {
             List<ProjectVersion.ProjectDependency> dependencies = new ArrayList<>();
-            extension.getModrinthDepends().get().required.forEach(rd -> {
+            extension.getModrinthDepends().getRequired().get().forEach(rd -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(rd);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.REQUIRED);
                 dependencies.add(dependency);
             });
 
-            extension.getModrinthDepends().get().optional.forEach(od -> {
+            extension.getModrinthDepends().getOptional().get().forEach(od -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(od);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.OPTIONAL);
                 dependencies.add(dependency);
             });
 
-            extension.getModrinthDepends().get().incompatible.forEach(id -> {
+            extension.getModrinthDepends().getIncompatible().get().forEach(id -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(id);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.INCOMPATIBLE);
                 dependencies.add(dependency);
             });
 
-            extension.getModrinthDepends().get().embedded.forEach(ed -> {
+            extension.getModrinthDepends().getEmbedded().get().forEach(ed -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(ed);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.EMBEDDED);

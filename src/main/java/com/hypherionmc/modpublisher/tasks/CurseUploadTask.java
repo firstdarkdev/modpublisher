@@ -55,7 +55,7 @@ public class CurseUploadTask extends DefaultTask {
             return;
 
         // Create the API Client and pass the Gradle logger as logger
-        uploadApi = new CurseUploadApi(extension.getApiKeys().get().curseforge, project.getLogger());
+        uploadApi = new CurseUploadApi(extension.getApiKeys().getCurseforge(), project.getLogger());
 
         // Enable debug mode if required
         uploadApi.setDebug(extension.getDebug().get());
@@ -134,15 +134,16 @@ public class CurseUploadTask extends DefaultTask {
             artifact.displayName(extension.getVersion().get());
         }
 
-        if (extension.getCurseDepends().isPresent()) {
-            extension.getCurseDepends().get().required.forEach(artifact::requirement);
-            extension.getCurseDepends().get().optional.forEach(artifact::optional);
-            extension.getCurseDepends().get().incompatible.forEach(artifact::incompatibility);
-            extension.getCurseDepends().get().embedded.forEach(artifact::embedded);
+        if (extension.getCurseDepends() != null) {
+            extension.getCurseDepends().getRequired().get().forEach(artifact::requirement);
+            extension.getCurseDepends().getOptional().get().forEach(artifact::optional);
+            extension.getCurseDepends().getIncompatible().get().forEach(artifact::incompatibility);
+            extension.getCurseDepends().getEmbedded().get().forEach(artifact::embedded);
         }
 
         if (extension.getAdditionalFiles().isPresent()) {
             for (Object file : extension.getAdditionalFiles().get()) {
+                System.err.println(file);
                 artifact.addAdditionalFile(CommonUtil.resolveFile(project, file));
             }
         }

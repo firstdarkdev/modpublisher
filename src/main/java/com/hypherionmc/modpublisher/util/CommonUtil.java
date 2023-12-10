@@ -10,6 +10,7 @@ import com.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
 import groovy.lang.Closure;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import java.io.File;
@@ -28,6 +29,11 @@ public class CommonUtil {
     public static File resolveFile(Project project, Object obj) {
         if (obj == null) {
             throw new NullPointerException("Null Path");
+        }
+
+        if (obj instanceof Provider) {
+            Provider<?> p = (Provider<?>) obj;
+            obj = p.get();
         }
 
         if (obj instanceof File) {

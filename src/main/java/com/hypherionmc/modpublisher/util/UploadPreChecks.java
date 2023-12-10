@@ -19,7 +19,7 @@ public class UploadPreChecks {
 
     public static void checkRequiredValues(Project project, ModPublisherGradleExtension extension) throws Exception {
         // Check if API Keys are configured
-        if (!extension.getApiKeys().isPresent()) {
+        if (extension.getApiKeys() == null) {
             throw new Exception("Missing apiKeys config. Artifacts cannot be uploaded without this");
         }
 
@@ -47,7 +47,7 @@ public class UploadPreChecks {
             return false;
 
         // Check that both the Curseforge API key and Project ID is defined
-        if (extension.getApiKeys().isPresent() && !extension.getApiKeys().get().curseforge.isEmpty()) {
+        if (extension.getApiKeys() != null && !extension.getApiKeys().getCurseforge().isEmpty()) {
             if (!extension.getCurseID().isPresent() || extension.getCurseID().get().isEmpty()) {
                 throw new Exception("Found Curseforge API token, but curseID is not defined");
             } else {
@@ -63,7 +63,7 @@ public class UploadPreChecks {
 
         checkVersion(project, extension);
         // Check that both the Modrinth API key and Project ID is defined
-        if (extension.getApiKeys().isPresent() && !extension.getApiKeys().get().modrinth.isEmpty()) {
+        if (extension.getApiKeys() != null && !extension.getApiKeys().getModrinth().isEmpty()) {
             if (!extension.getModrinthID().isPresent() || extension.getModrinthID().get().isEmpty()) {
                 throw new Exception("Found Modrinth API token, but modrinthID is not defined");
             } else {
@@ -78,7 +78,7 @@ public class UploadPreChecks {
             return false;
 
         checkVersion(project, extension);
-        if (extension.getApiKeys().isPresent() && !extension.getApiKeys().get().github.isEmpty()) {
+        if (extension.getApiKeys() != null && !extension.getApiKeys().getGithub().isEmpty()) {
             if (!extension.getGithubRepo().isPresent() || extension.getGithubRepo().get().isEmpty()) {
                 throw new Exception("Found GitHub token, but githubRepo is not defined");
             } else {
