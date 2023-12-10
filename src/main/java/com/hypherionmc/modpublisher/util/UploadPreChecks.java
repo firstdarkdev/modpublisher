@@ -19,25 +19,25 @@ public class UploadPreChecks {
 
     public static void checkRequiredValues(Project project, ModPublisherGradleExtension extension) throws Exception {
         // Check if API Keys are configured
-        if (extension.apiKeys == null) {
+        if (!extension.getApiKeys().isPresent()) {
             throw new Exception("Missing apiKeys config. Artifacts cannot be uploaded without this");
         }
 
-        if (extension.artifact == null) {
+        if (!extension.getArtifact().isPresent()) {
             throw new Exception("Missing artifact. Cannot continue");
         }
 
-        if (extension.gameVersions.isEmpty()) {
+        if (!extension.getGameVersions().isPresent() || extension.getGameVersions().get().isEmpty()) {
             throw new Exception("gameVersions is not defined. This is required");
         }
 
-        if (!extension.disableMalwareScanner) {
-            JarInfectionScanner.scan(project, extension.artifact);
+        if (!extension.getDisableMalwareScanner().get()) {
+            JarInfectionScanner.scan(project, extension.getArtifact().get());
         }
     }
 
     public static void checkVersion(Project project, ModPublisherGradleExtension extension) throws Exception {
-        if (extension.version == null || extension.version.isEmpty()) {
+        if (!extension.getVersion().isPresent() || extension.getVersion().get().isEmpty()) {
             throw new Exception("Version is not defined. This is REQUIRED by modrinth/github");
         }
     }
@@ -47,8 +47,8 @@ public class UploadPreChecks {
             return false;
 
         // Check that both the Curseforge API key and Project ID is defined
-        if (extension.apiKeys.curseforge != null && !extension.apiKeys.curseforge.isEmpty()) {
-            if (extension.curseID == null || extension.curseID.isEmpty()) {
+        if (extension.getApiKeys().isPresent() && !extension.getApiKeys().get().curseforge.isEmpty()) {
+            if (!extension.getCurseID().isPresent() || extension.getCurseID().get().isEmpty()) {
                 throw new Exception("Found Curseforge API token, but curseID is not defined");
             } else {
                 return true;
@@ -63,8 +63,8 @@ public class UploadPreChecks {
 
         checkVersion(project, extension);
         // Check that both the Modrinth API key and Project ID is defined
-        if (extension.apiKeys.modrinth != null && !extension.apiKeys.modrinth.isEmpty()) {
-            if (extension.modrinthID == null || extension.modrinthID.isEmpty()) {
+        if (extension.getApiKeys().isPresent() && !extension.getApiKeys().get().modrinth.isEmpty()) {
+            if (!extension.getModrinthID().isPresent() || extension.getModrinthID().get().isEmpty()) {
                 throw new Exception("Found Modrinth API token, but modrinthID is not defined");
             } else {
                 return true;
@@ -78,8 +78,8 @@ public class UploadPreChecks {
             return false;
 
         checkVersion(project, extension);
-        if (extension.apiKeys.github != null && !extension.apiKeys.github.isEmpty()) {
-            if (extension.githubRepo == null || extension.githubRepo.isEmpty()) {
+        if (extension.getApiKeys().isPresent() && !extension.getApiKeys().get().github.isEmpty()) {
+            if (!extension.getGithubRepo().isPresent() || extension.getGithubRepo().get().isEmpty()) {
                 throw new Exception("Found GitHub token, but githubRepo is not defined");
             } else {
                 return true;
@@ -89,7 +89,7 @@ public class UploadPreChecks {
     }
 
     public static void checkEmptyJar(ModPublisherGradleExtension extension, File file, List<String> loaderVersions) throws Exception {
-        if (extension.disableEmptyJarCheck)
+        if (extension.getDisableEmptyJarCheck().get())
             return;
 
         if (loaderVersions.isEmpty())

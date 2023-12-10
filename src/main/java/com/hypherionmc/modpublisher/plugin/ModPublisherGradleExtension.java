@@ -6,8 +6,12 @@
  */
 package com.hypherionmc.modpublisher.plugin;
 
-import groovy.lang.Closure;
+import lombok.Getter;
+import lombok.Setter;
+import org.gradle.api.Action;
 import org.gradle.api.Project;
+import org.gradle.api.provider.ListProperty;
+import org.gradle.api.provider.Property;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,95 +24,100 @@ import java.util.List;
 public class ModPublisherGradleExtension {
 
     // API Keys for Modrinth/Curseforge/GitHub. Used for publishing
-    public ApiKeys apiKeys;
+    @Getter private final Property<ApiKeys> apiKeys;
 
     // Enable debug mode. If enabled, no files will actually be uploaded
-    public boolean debug = false;
+    @Getter private final Property<Boolean> debug;
 
     // Curseforge Project ID
-    public String curseID;
+    @Getter private final Property<String> curseID;
 
     // Modrinth Project ID (NOT SLUG)
-    public String modrinthID;
+    @Getter private final Property<String> modrinthID;
 
     // GitHub Repo. username/repo or URL
-    public String githubRepo;
+    @Getter private final Property<String> githubRepo;
 
     // Type of release. Valid entries: release, beta, alpha
-    public String versionType = "release";
+    @Getter private final Property<String> versionType;
 
     // Changelog text to apply to the uploaded file
-    public Object changelog;
+    @Getter private final Property<Object> changelog;
 
     // Version. Used for Modrinth and GitHub
-    public String version;
+    @Getter private final Property<String> version;
 
     // Friendly display name for the files
-    public String displayName;
+    @Getter private final Property<String> displayName;
 
     // Minecraft versions supported by this upload
-    public List<String> gameVersions = new ArrayList<>();
+    @Getter private final ListProperty<String> gameVersions;
 
     // Modloaders supported by this upload
-    public List<String> loaders = new ArrayList<>();
+    @Getter private final ListProperty<String> loaders;
 
     // New Curseforge Environment Tag. CLIENT, SERVER or BOTH
-    public String curseEnvironment;
+    @Getter private final Property<String> curseEnvironment;
 
     // The file, or string location of the file that will be uploaded
-    public Object artifact;
+    @Getter private final Property<Object> artifact;
 
     // Control Curseforge Dependencies
-    public Dependencies curseDepends;
+    @Getter private final Property<Dependencies> curseDepends;
 
     // Control Modrinth Dependencies
-    public Dependencies modrinthDepends;
+    @Getter private final Property<Dependencies> modrinthDepends;
 
     // Disable Jar Scanning
-    public boolean disableMalwareScanner = false;
+    @Getter private final Property<Boolean> disableMalwareScanner;
 
     // Disable Empty Jar Checker
-    public boolean disableEmptyJarCheck = false;
+    @Getter private final Property<Boolean> disableEmptyJarCheck;
 
     // Allow uploads to modrinth staging
-    public boolean useModrinthStaging = false;
+    @Getter private final Property<Boolean> useModrinthStaging;
 
     // Allow uploading additional files
-    public List<Object> additionalFiles = new ArrayList<>();
+    @Getter private final ListProperty<Object> additionalFiles;
 
     private final Project project;
 
     public ModPublisherGradleExtension(Project project) {
         this.project = project;
+        this.apiKeys = project.getObjects().property(ApiKeys.class).convention(new ApiKeys());
+        this.debug = project.getObjects().property(Boolean.class).convention(false);
+        this.curseID = project.getObjects().property(String.class);
+        this.modrinthID = project.getObjects().property(String.class);
+        this.githubRepo = project.getObjects().property(String.class);
+        this.versionType = project.getObjects().property(String.class).convention("release");
+        this.changelog = project.getObjects().property(Object.class);
+        this.version = project.getObjects().property(String.class);
+        this.displayName = project.getObjects().property(String.class);
+        this.gameVersions = project.getObjects().listProperty(String.class).empty();
+        this.loaders = project.getObjects().listProperty(String.class).empty();
+        this.curseEnvironment = project.getObjects().property(String.class).convention("both");
+        this.artifact = project.getObjects().property(Object.class);
+        this.curseDepends = project.getObjects().property(Dependencies.class).convention(new Dependencies());
+        this.modrinthDepends = project.getObjects().property(Dependencies.class).convention(new Dependencies());
+        this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(false);
+        this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
+        this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
+        this.additionalFiles = project.getObjects().listProperty(Object.class).empty();
     }
 
-    /**
-     * Configure API Keys for this Project
-     */
-    public ApiKeys apiKeys(Closure<ApiKeys> closure) {
-        apiKeys = new ApiKeys();
-        project.configure(apiKeys, closure);
-        return apiKeys;
+    public void apiKeys(Action<ApiKeys> action) {
+        action.execute(apiKeys.get());
     }
 
-    /**
-     * Configure Curseforge Dependencies for this project
-     */
-    public Dependencies curseDepends(Closure<Dependencies> closure) {
-        curseDepends = new Dependencies();
-        project.configure(curseDepends, closure);
-        return curseDepends;
+    public void curseDepends(Action<Dependencies> action) {
+        action.execute(curseDepends.get());
     }
 
-    /**
-     * Configure Modrinth dependencies for this project
-     */
-    public Dependencies modrinthDepends(Closure<Dependencies> closure) {
-        modrinthDepends = new Dependencies();
-        project.configure(modrinthDepends, closure);
-        return modrinthDepends;
+    public void modrinthDepends(Action<Dependencies> action) {
+        action.execute(modrinthDepends.get());
     }
 
+    @Setter
     public static class ApiKeys {
         public String curseforge;
         public String modrinth;
@@ -121,5 +130,5 @@ public class ModPublisherGradleExtension {
         public List<String> incompatible = new ArrayList<>();
         public List<String> embedded = new ArrayList<>();
     }
-
 }
+

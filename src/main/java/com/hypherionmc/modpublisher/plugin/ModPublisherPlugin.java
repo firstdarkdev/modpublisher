@@ -53,21 +53,21 @@ public class ModPublisherPlugin implements Plugin<Project> {
         project.afterEvaluate(c -> {
             try {
                 if (UploadPreChecks.canUploadCurse(project, extension)) {
-                    resolveInputTask(project, extension.artifact, curseUploadTask);
+                    resolveInputTask(project, extension.getArtifact().get(), curseUploadTask);
                     uploadTask.dependsOn(curseUploadTask);
                 }
             } catch (Exception ignored) {}
 
             try {
                 if (UploadPreChecks.canUploadModrinth(project, extension)) {
-                    resolveInputTask(project, extension.artifact, modrinthUploadTask);
+                    resolveInputTask(project, extension.getArtifact().get(), modrinthUploadTask);
                     uploadTask.dependsOn(modrinthUploadTask);
                 }
             } catch (Exception ignored) {}
 
             try {
                 if (UploadPreChecks.canUploadGitHub(project, extension)) {
-                    resolveInputTask(project, extension.artifact, gitHubUploadTask);
+                    resolveInputTask(project, extension.getArtifact().get(), gitHubUploadTask);
                     uploadTask.dependsOn(gitHubUploadTask);
                 }
             } catch (Exception ignored) {}

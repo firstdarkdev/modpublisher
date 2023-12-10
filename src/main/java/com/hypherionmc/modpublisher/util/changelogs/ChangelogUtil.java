@@ -1,3 +1,9 @@
+/*
+ * This file is part of modpublisher, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) 2023 HypherionSA and Contributors
+ *
+ */
 package com.hypherionmc.modpublisher.util.changelogs;
 
 import okhttp3.OkHttpClient;

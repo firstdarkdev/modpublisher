@@ -42,8 +42,14 @@ dependencies {
     shadeMe "org.ow2.asm:asm:${asm}"
     shadeMe "org.ow2.asm:asm-tree:${asm}"
 
+    compileOnly "org.projectlombok:lombok:${lombok}"
+    annotationProcessor "org.projectlombok:lombok:${lombok}"
+
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit}"
+
+    testCompileOnly "org.projectlombok:lombok:${lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombok}"
 }
 
 test {

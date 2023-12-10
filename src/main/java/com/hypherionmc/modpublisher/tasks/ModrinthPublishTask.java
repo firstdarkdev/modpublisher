@@ -64,29 +64,29 @@ public class ModrinthPublishTask extends DefaultTask {
         userAgent.projectVersion("v1");
 
         // Create the API Client
-        modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.useModrinthStaging ? Constants.MODRINTH_STAGING_API : Constants.MODRINTH_API, extension.apiKeys.modrinth);
+        modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.getUseModrinthStaging().get() ? Constants.MODRINTH_STAGING_API : Constants.MODRINTH_API, extension.getApiKeys().get().modrinth);
 
-        File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
+        File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
 
         if (uploadFile == null || !uploadFile.exists())
-            throw new FileNotFoundException("Cannot find file " + extension.artifact.toString());
+            throw new FileNotFoundException("Cannot find file " + extension.getArtifact().get().toString());
 
         final List<File> uploadFiles = new ArrayList<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();
-        builder.projectId(extension.modrinthID);
-        builder.changelog(CommonUtil.resolveString(extension.changelog));
-        builder.versionType(ProjectVersion.VersionType.valueOf(extension.versionType.toUpperCase()));
-        builder.versionNumber(extension.version);
+        builder.projectId(extension.getModrinthID().get());
+        builder.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
+        builder.versionType(ProjectVersion.VersionType.valueOf(extension.getVersionType().get().toUpperCase()));
+        builder.versionNumber(extension.getVersion().get());
         uploadFiles.add(uploadFile);
 
-        if (extension.displayName != null && !extension.displayName.isEmpty()) {
-            builder.name(extension.displayName);
+        if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
+            builder.name(extension.getDisplayName().get());
         } else {
-            builder.name(extension.version);
+            builder.name(extension.getVersion().get());
         }
 
         List<String> finalGameVersions = new ArrayList<>();
-        for (String gameVersion : extension.gameVersions) {
+        for (String gameVersion : extension.getGameVersions().get()) {
             if (gameVersion.endsWith("-snapshot"))
                 continue;
             finalGameVersions.add(gameVersion);
@@ -95,7 +95,7 @@ public class ModrinthPublishTask extends DefaultTask {
         builder.gameVersions(finalGameVersions);
 
         List<String> finalLoaders = new ArrayList<>();
-        for (String loader : extension.loaders) {
+        for (String loader : extension.getLoaders().get()) {
             if (loader.equalsIgnoreCase("risugami's modloader")) {
                 if (!finalLoaders.contains("modloader"))
                     finalLoaders.add("modloader");
@@ -108,30 +108,30 @@ public class ModrinthPublishTask extends DefaultTask {
         if (!finalLoaders.isEmpty())
             builder.loaders(finalLoaders);
 
-        if (extension.modrinthDepends != null) {
+        if (extension.getModrinthDepends().isPresent()) {
             List<ProjectVersion.ProjectDependency> dependencies = new ArrayList<>();
-            extension.modrinthDepends.required.forEach(rd -> {
+            extension.getModrinthDepends().get().required.forEach(rd -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(rd);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.REQUIRED);
                 dependencies.add(dependency);
             });
 
-            extension.modrinthDepends.optional.forEach(od -> {
+            extension.getModrinthDepends().get().optional.forEach(od -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(od);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.OPTIONAL);
                 dependencies.add(dependency);
             });
 
-            extension.modrinthDepends.incompatible.forEach(id -> {
+            extension.getModrinthDepends().get().incompatible.forEach(id -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(id);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.INCOMPATIBLE);
                 dependencies.add(dependency);
             });
 
-            extension.modrinthDepends.embedded.forEach(ed -> {
+            extension.getModrinthDepends().get().embedded.forEach(ed -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
                 dependency.setProjectId(ed);
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.EMBEDDED);
@@ -143,27 +143,27 @@ public class ModrinthPublishTask extends DefaultTask {
             }
         }
 
-        if (!extension.additionalFiles.isEmpty()) {
-            for (Object file : extension.additionalFiles) {
+        if (extension.getAdditionalFiles().isPresent()) {
+            for (Object file : extension.getAdditionalFiles().get()) {
                 uploadFiles.add(CommonUtil.resolveFile(project, file));
             }
         }
         builder.files(uploadFiles);
 
         // Debug mode, so we do not upload the file
-        if (extension.debug) {
+        if (extension.getDebug().get()) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             project.getLogger().lifecycle("Full data to be sent for upload: {}", gson.toJson(builder.build()));
             return;
         }
 
-        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.loaders);
+        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
         ProjectVersion projectVersion = modrinthAPI.versions().createProjectVersion(builder.build()).join();
 
         project.getLogger().lifecycle(
                 "Successfully uploaded version {} to {} as version ID {}.",
                 projectVersion.getVersionNumber(),
-                extension.modrinthID,
+                extension.getModrinthID().get(),
                 projectVersion.getId()
         );
     }

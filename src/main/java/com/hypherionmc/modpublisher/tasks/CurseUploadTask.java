@@ -7,12 +7,12 @@
 package com.hypherionmc.modpublisher.tasks;
 
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.util.CommonUtil;
+import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import me.hypherionmc.curseupload.CurseUploadApi;
 import me.hypherionmc.curseupload.constants.CurseChangelogType;
 import me.hypherionmc.curseupload.constants.CurseReleaseType;
 import me.hypherionmc.curseupload.requests.CurseArtifact;
-import com.hypherionmc.modpublisher.util.CommonUtil;
-import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
@@ -55,26 +55,26 @@ public class CurseUploadTask extends DefaultTask {
             return;
 
         // Create the API Client and pass the Gradle logger as logger
-        uploadApi = new CurseUploadApi(extension.apiKeys.curseforge, project.getLogger());
+        uploadApi = new CurseUploadApi(extension.getApiKeys().get().curseforge, project.getLogger());
 
         // Enable debug mode if required
-        uploadApi.setDebug(extension.debug);
+        uploadApi.setDebug(extension.getDebug().get());
 
-        File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
+        File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
 
         if (uploadFile == null || !uploadFile.exists())
-            throw new FileNotFoundException("Cannot find file " + extension.artifact.toString());
+            throw new FileNotFoundException("Cannot find file " + extension.getArtifact().get().toString());
 
-        CurseArtifact artifact = new CurseArtifact(uploadFile, Long.parseLong(extension.curseID));
-        artifact.changelog(CommonUtil.resolveString(extension.changelog));
+        CurseArtifact artifact = new CurseArtifact(uploadFile, Long.parseLong(extension.getCurseID().get()));
+        artifact.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
         artifact.changelogType(CurseChangelogType.MARKDOWN);
-        artifact.releaseType(CurseReleaseType.valueOf(extension.versionType.toUpperCase()));
+        artifact.releaseType(CurseReleaseType.valueOf(extension.getVersionType().get().toUpperCase()));
 
         // Start super-duper accurate check for CraftPresence... Weirdness xD
         // Just kidding CDA. But seriously, you have way too much free time
 
         // Compare if MC version is below b1.6.6, as the lowest curse supports is b1.6.6
-        for (String gameVersion : extension.gameVersions) {
+        for (String gameVersion : extension.getGameVersions().get()) {
             if (pattern.matcher(gameVersion).matches())
                 continue;
 
@@ -97,7 +97,7 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
-        for (String modLoader : extension.loaders) {
+        for (String modLoader : extension.getLoaders().get()) {
 
             // Replace `modloader` with `risugamis-modloader`
             if (modLoader.equalsIgnoreCase("modloader")) {
@@ -110,8 +110,8 @@ public class CurseUploadTask extends DefaultTask {
         // Back to our regularly scheduled code
 
         // Add Curse Environment tags if they are specified
-        if (extension.curseEnvironment != null && !extension.curseEnvironment.isEmpty()) {
-            String env = extension.curseEnvironment.toLowerCase();
+        if (extension.getCurseEnvironment().isPresent() && !extension.getCurseEnvironment().get().isEmpty()) {
+            String env = extension.getCurseEnvironment().get().toLowerCase();
 
             switch (env) {
                 case "client":
@@ -128,26 +128,26 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
-        if (extension.displayName != null && !extension.displayName.isEmpty()) {
-            artifact.displayName(extension.displayName);
+        if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
+            artifact.displayName(extension.getDisplayName().get());
         } else {
-            artifact.displayName(extension.version);
+            artifact.displayName(extension.getVersion().get());
         }
 
-        if (extension.curseDepends != null) {
-            extension.curseDepends.required.forEach(artifact::requirement);
-            extension.curseDepends.optional.forEach(artifact::optional);
-            extension.curseDepends.incompatible.forEach(artifact::incompatibility);
-            extension.curseDepends.embedded.forEach(artifact::embedded);
+        if (extension.getCurseDepends().isPresent()) {
+            extension.getCurseDepends().get().required.forEach(artifact::requirement);
+            extension.getCurseDepends().get().optional.forEach(artifact::optional);
+            extension.getCurseDepends().get().incompatible.forEach(artifact::incompatibility);
+            extension.getCurseDepends().get().embedded.forEach(artifact::embedded);
         }
 
-        if (!extension.additionalFiles.isEmpty()) {
-            for (Object file : extension.additionalFiles) {
+        if (extension.getAdditionalFiles().isPresent()) {
+            for (Object file : extension.getAdditionalFiles().get()) {
                 artifact.addAdditionalFile(CommonUtil.resolveFile(project, file));
             }
         }
 
-        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.loaders);
+        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
 
         // If debug mode is enabled, this will only log the JSON that will be sent and
         // will not actually upload the file

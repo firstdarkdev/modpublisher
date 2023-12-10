@@ -62,60 +62,60 @@ public class GithubUploadTask extends DefaultTask {
         // Try to instantiate the GitHub API.
         // Will throw an error if the Token is invalid
         gitHub = new GitHubBuilder()
-                .withOAuthToken(extension.apiKeys.github)
+                .withOAuthToken(extension.getApiKeys().get().github)
                 .withConnector(new OkHttpGitHubConnector(client)).build();
 
-        File uploadFile = CommonUtil.resolveFile(project, extension.artifact);
+        File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
 
         if (uploadFile == null || !uploadFile.exists())
-            throw new FileNotFoundException("Cannot find file " + extension.artifact.toString());
+            throw new FileNotFoundException("Cannot find file " + extension.getArtifact().get());
 
         if (gitHub == null)
             return;
 
-        final String uploadRepo = CommonUtil.cleanGithubUrl(extension.githubRepo);
+        // Debug Mode. Return early to prevent any API calls that will result in anything
+        // being created or uploaded
+        if (extension.getDebug().get()) {
+            project.getLogger().lifecycle("Debug mode is enabled. Not uploading to github");
+            return;
+        }
+
+        final String uploadRepo = CommonUtil.cleanGithubUrl(extension.getGithubRepo().get());
 
         GHRepository ghRepository = gitHub.getRepository(uploadRepo);
 
         // Try to find an existing release.
         // If one is found, the file will be added onto it.
-        GHRelease ghRelease = ghRepository.getReleaseByTagName(extension.version);
+        GHRelease ghRelease = ghRepository.getReleaseByTagName(extension.getVersion().get());
 
-        // Debug Mode. Return early to prevent any API calls that will result in anything
-        // being created or uploaded
-        if (extension.debug) {
-            project.getLogger().lifecycle("Debug mode is enabled. Not uploading to github");
-            return;
-        }
-
-        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.loaders);
+        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
 
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {
-            GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, extension.version);
+            GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, extension.getVersion().get());
 
-            if (extension.displayName != null && !extension.displayName.isEmpty()) {
-                releaseBuilder.name(extension.displayName);
+            if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
+                releaseBuilder.name(extension.getDisplayName().get());
             } else {
-                releaseBuilder.name(extension.version);
+                releaseBuilder.name(extension.getVersion().get());
             }
 
-            releaseBuilder.body(CommonUtil.resolveString(extension.changelog));
+            releaseBuilder.body(CommonUtil.resolveString(extension.getChangelog().get()));
             releaseBuilder.draft(true);
             releaseBuilder.commitish(ghRepository.getDefaultBranch());
             ghRelease = releaseBuilder.create();
         }
 
         if (ghRelease == null)
-            throw new NullPointerException("Could not get existing or create new Github Release with tag " +  extension.version);
+            throw new NullPointerException("Could not get existing or create new Github Release with tag " +  extension.getVersion().get());
 
         GHAsset asset = ghRelease.uploadAsset(uploadFile, "application/octet-stream");
 
         if (asset == null)
             throw new IOException("Failed to upload release to github. No error found");
 
-        if (!extension.additionalFiles.isEmpty()) {
-            for (Object file : extension.additionalFiles) {
+        if (extension.getAdditionalFiles().isPresent()) {
+            for (Object file : extension.getAdditionalFiles().get()) {
                 ghRelease.uploadAsset(CommonUtil.resolveFile(project, file), "application/octet-stream");
             }
         }
@@ -123,13 +123,13 @@ public class GithubUploadTask extends DefaultTask {
         // Mark Release as PRE-RELEASE if alpha or beta
         // Actually publish the release if a brand new one was created
         GHReleaseUpdater releaseUpdater = ghRelease.update();
-        releaseUpdater.prerelease(extension.versionType.equalsIgnoreCase("beta") || extension.versionType.equalsIgnoreCase("alpha"));
+        releaseUpdater.prerelease(extension.getVersionType().get().equalsIgnoreCase("beta") || extension.getVersionType().get().equalsIgnoreCase("alpha"));
         releaseUpdater.draft(false);
         releaseUpdater.update();
 
         project.getLogger().lifecycle(
                 "Successfully uploaded version {} to {}. {}.",
-                extension.version,
+                extension.getVersion().get(),
                 ghRepository.getUrl().toString(),
                 ghRelease.getHtmlUrl().toString()
         );
