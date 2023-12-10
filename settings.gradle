@@ -1,11 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
-        mavenLocal()
     }
 }
 rootProject.name = 'modpublisher'
-
-// Uncomment to use test project
-//include 'testproject'
 

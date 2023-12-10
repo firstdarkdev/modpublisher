@@ -4,7 +4,7 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher;
+package com.hypherionmc.modpublisher;
 
 /**
  * @author HypherionSA

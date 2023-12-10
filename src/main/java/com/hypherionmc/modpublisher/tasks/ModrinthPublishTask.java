@@ -4,18 +4,18 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.tasks;
+package com.hypherionmc.modpublisher.tasks;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.hypherionmc.modpublisher.Constants;
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.util.CommonUtil;
+import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import masecla.modrinth4j.client.agent.UserAgent;
 import masecla.modrinth4j.endpoints.version.CreateVersion;
 import masecla.modrinth4j.main.ModrinthAPI;
 import masecla.modrinth4j.model.version.ProjectVersion;
-import me.hypherionmc.modpublisher.Constants;
-import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
-import me.hypherionmc.modpublisher.util.CommonUtil;
-import me.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;

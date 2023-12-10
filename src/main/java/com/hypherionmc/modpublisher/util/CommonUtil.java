@@ -4,10 +4,10 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.util;
+package com.hypherionmc.modpublisher.util;
 
+import com.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
 import groovy.lang.Closure;
-import me.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;

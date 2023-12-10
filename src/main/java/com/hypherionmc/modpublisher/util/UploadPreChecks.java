@@ -4,10 +4,10 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.util;
+package com.hypherionmc.modpublisher.util;
 
-import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
-import me.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 

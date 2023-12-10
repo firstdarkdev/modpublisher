@@ -4,13 +4,13 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.plugin;
+package com.hypherionmc.modpublisher.plugin;
 
-import me.hypherionmc.modpublisher.tasks.CurseUploadTask;
-import me.hypherionmc.modpublisher.tasks.GithubUploadTask;
-import me.hypherionmc.modpublisher.tasks.ModrinthPublishTask;
-import me.hypherionmc.modpublisher.tasks.UploadModTask;
-import me.hypherionmc.modpublisher.util.UploadPreChecks;
+import com.hypherionmc.modpublisher.tasks.CurseUploadTask;
+import com.hypherionmc.modpublisher.tasks.GithubUploadTask;
+import com.hypherionmc.modpublisher.tasks.ModrinthPublishTask;
+import com.hypherionmc.modpublisher.tasks.UploadModTask;
+import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -18,7 +18,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import javax.annotation.Nonnull;
 
-import static me.hypherionmc.modpublisher.Constants.*;
+import static com.hypherionmc.modpublisher.Constants.*;
 
 /**
  * @author HypherionSA

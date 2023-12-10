@@ -1,4 +1,4 @@
-package me.hypherionmc.modpublisher.util.changelogs;
+package com.hypherionmc.modpublisher.util.changelogs;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

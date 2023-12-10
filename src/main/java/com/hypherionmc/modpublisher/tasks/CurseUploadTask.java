@@ -4,15 +4,15 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.tasks;
+package com.hypherionmc.modpublisher.tasks;
 
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import me.hypherionmc.curseupload.CurseUploadApi;
 import me.hypherionmc.curseupload.constants.CurseChangelogType;
 import me.hypherionmc.curseupload.constants.CurseReleaseType;
 import me.hypherionmc.curseupload.requests.CurseArtifact;
-import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
-import me.hypherionmc.modpublisher.util.CommonUtil;
-import me.hypherionmc.modpublisher.util.UploadPreChecks;
+import com.hypherionmc.modpublisher.util.CommonUtil;
+import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;

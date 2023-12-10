@@ -4,7 +4,7 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.plugin;
+package com.hypherionmc.modpublisher.plugin;
 
 import groovy.lang.Closure;
 import org.gradle.api.Project;

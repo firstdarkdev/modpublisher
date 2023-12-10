@@ -4,12 +4,12 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.tasks;
+package com.hypherionmc.modpublisher.tasks;
 
-import me.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
-import me.hypherionmc.modpublisher.util.CommonUtil;
-import me.hypherionmc.modpublisher.util.UploadPreChecks;
-import me.hypherionmc.modpublisher.util.UserAgentInterceptor;
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.util.CommonUtil;
+import com.hypherionmc.modpublisher.util.UploadPreChecks;
+import com.hypherionmc.modpublisher.util.UserAgentInterceptor;
 import okhttp3.OkHttpClient;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;

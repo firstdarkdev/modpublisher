@@ -8,7 +8,7 @@ plugins {
 }
 apply plugin: 'maven-publish'
 
-group = 'me.hypherionmc.modutils'
+group = 'com.hypherionmc.modutils'
 version = "${version_base}.${version_patch}"
 description = "Gradle plugin to Upload and Publish mods to Curseforge/Modrinth/Github"
 archivesBaseName = 'ModPublisher'
@@ -26,23 +26,23 @@ configurations {
 repositories {
     mavenCentral()
     maven {
-        url "https://maven.firstdarkdev.xyz/releases"
+        url "https://maven.firstdark.dev/releases"
     }
 }
 
 dependencies {
     implementation gradleApi()
 
-    shadeMe "me.hypherionmc.modutils:CurseUpload4j:1.0.9"
-    shadeMe "dev.masecla:Modrinth4J:2.2.0"
-    shadeMe "org.kohsuke:github-api:1.318"
-    shadeMe "org.apache.maven:maven-artifact:4.0.0-alpha-8"
+    shadeMe "me.hypherionmc.modutils:CurseUpload4j:${curse4j}"
+    shadeMe "dev.masecla:Modrinth4J:${modrinth4j}"
+    shadeMe "org.kohsuke:github-api:${github}"
+    shadeMe "org.apache.maven:maven-artifact:${mavenart}"
 
-    shadeMe 'org.ow2.asm:asm:9.6'
-    shadeMe 'org.ow2.asm:asm-tree:9.6'
+    shadeMe "org.ow2.asm:asm:${asm}"
+    shadeMe "org.ow2.asm:asm-tree:${asm}"
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit}"
 }
 
 test {
@@ -58,16 +58,15 @@ shadowJar {
 gradlePlugin {
     plugins {
         modPublisherPlugin {
-            id = 'me.hypherionmc.modutils.modpublisher'
+            id = 'com.hypherionmc.modutils.modpublisher'
             description = project.description
             displayName = 'ModPublisher'
             version = project.version
-            implementationClass = "me.hypherionmc.modpublisher.plugin.ModPublisherPlugin"
+            implementationClass = "com.hypherionmc.modpublisher.plugin.ModPublisherPlugin"
             tags.set(['modrinth', 'publish', 'mods', 'github', 'minecraft', 'curseforge'])
         }
     }
 }
-
 
 jar {
     manifest {

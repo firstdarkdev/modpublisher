@@ -4,7 +4,7 @@
  * Copyright (c) 2023 HypherionSA and Contributors
  *
  */
-package me.hypherionmc.modpublisher.util;
+package com.hypherionmc.modpublisher.util;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;

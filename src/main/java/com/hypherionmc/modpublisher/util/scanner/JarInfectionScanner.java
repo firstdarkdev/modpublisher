@@ -1,6 +1,6 @@
-package me.hypherionmc.modpublisher.util.scanner;
+package com.hypherionmc.modpublisher.util.scanner;
 
-import me.hypherionmc.modpublisher.util.CommonUtil;
+import com.hypherionmc.modpublisher.util.CommonUtil;
 import org.gradle.api.Project;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.*;

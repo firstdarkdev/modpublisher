@@ -1,5 +1,5 @@
-import me.hypherionmc.modpublisher.util.CommonUtil;
-import me.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
+import com.hypherionmc.modpublisher.util.CommonUtil;
+import com.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
