@@ -64,6 +64,7 @@ publisher {
     setModrinthID("dsgfhs79789")
     
     // Type of release. beta, alpha or release
+    // You can also use VersionType.BETA, VersionType.ALPHA or VersionType.RELEASE
     setVersionType("beta")
     
     // Changelog. This can be a file, string, OR, gist/github url
@@ -210,6 +211,7 @@ publisher {
     githubRepo.set("OWNER/REPO")
     
     // Type of release. beta, alpha or release
+    // You can also use VersionType.BETA, VersionType.ALPHA or VersionType.RELEASE
     versionType.set("release")
     
     // Changelog. This can be a file, string, OR, gist/github url
