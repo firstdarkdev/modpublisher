@@ -8,6 +8,7 @@ package com.hypherionmc.modpublisher.plugin;
 
 import com.hypherionmc.modpublisher.properties.CurseEnvironment;
 import com.hypherionmc.modpublisher.properties.ModLoader;
+import com.hypherionmc.modpublisher.properties.ReleaseType;
 import lombok.Getter;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
@@ -203,6 +204,14 @@ public class ModPublisherGradleExtension {
      */
     public void setCurseEnvironment(CurseEnvironment environment) {
         this.curseEnvironment.set(environment.toString().toLowerCase());
+    }
+
+    /**
+     * Allows setting the release type with the {@link ReleaseType} helper enum
+      * @param type The release type to set
+     */
+    public void setReleaseType(ReleaseType type) {
+        this.versionType.set(type.toString().toLowerCase());
     }
 
     /**
