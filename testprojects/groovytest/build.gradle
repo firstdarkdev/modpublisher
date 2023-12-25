@@ -21,6 +21,12 @@ artifacts {
     archives jar
 }
 
+tasks.register('createDummyJar', Jar) {
+    // Configure the JAR task to have no files
+    from {}
+    archiveFileName = 'dummy.jar' // Set the desired name for the JAR file
+}
+
 publisher {
     apiKeys {
         modrinth System.getenv("MODRINTH_TOKEN")
@@ -38,6 +44,7 @@ publisher {
     setLoaders(ModLoader.FABRIC, ModLoader.FORGE)
     setCurseEnvironment(CurseEnvironment.BOTH)
     setArtifact(jar)
+    setPlatformArtifact(com.hypherionmc.modpublisher.properties.Platform.MODRINTH, createDummyJar)
     setDisableEmptyJarCheck(true)
     addAdditionalFile(jar)
 

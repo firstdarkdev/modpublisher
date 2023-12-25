@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.hypherionmc.modpublisher.Constants;
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import masecla.modrinth4j.client.agent.UserAgent;
@@ -51,7 +52,7 @@ public class ModrinthPublishTask extends DefaultTask {
     @TaskAction
     public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to Modrinth");
-        UploadPreChecks.checkRequiredValues(project, extension);
+        UploadPreChecks.checkRequiredValues(project, Platform.MODRINTH, extension);
         boolean canUpload = UploadPreChecks.canUploadModrinth(project, extension);
         if (!canUpload)
             return;
@@ -66,10 +67,11 @@ public class ModrinthPublishTask extends DefaultTask {
         // Create the API Client
         modrinthAPI = ModrinthAPI.rateLimited(userAgent.build(), extension.getUseModrinthStaging().get() ? Constants.MODRINTH_STAGING_API : Constants.MODRINTH_API, extension.getApiKeys().getModrinth());
 
-        File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
+        Object artifactObject = CommonUtil.getPlatformArtifact(Platform.MODRINTH, extension);
+        File uploadFile = CommonUtil.resolveFile(project, artifactObject);
 
         if (uploadFile == null || !uploadFile.exists())
-            throw new FileNotFoundException("Cannot find file " + extension.getArtifact().get().toString());
+            throw new FileNotFoundException("Cannot find file " + artifactObject);
 
         final List<File> uploadFiles = new ArrayList<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();

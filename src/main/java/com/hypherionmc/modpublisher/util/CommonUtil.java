@@ -6,9 +6,12 @@
  */
 package com.hypherionmc.modpublisher.util;
 
+import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.changelogs.ChangelogUtil;
 import groovy.lang.Closure;
 import org.apache.commons.io.FileUtils;
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
@@ -44,6 +47,24 @@ public class CommonUtil {
             return ((AbstractArchiveTask)obj).getArchiveFile().get().getAsFile();
         }
         return project.file(obj);
+    }
+
+    /**
+     * Resolve an override artifact for a specific platform
+     * @param platform The {@link Platform} the override is for
+     * @param extension The configured gradle extension
+     * @return The override artifact, or default artifact
+     */
+    public static Object getPlatformArtifact(Platform platform, ModPublisherGradleExtension extension) {
+        if (!extension.getArtifacts().isEmpty() && extension.getArtifacts().containsKey(platform.toString().toLowerCase())) {
+            return extension.getArtifacts().get(platform.toString().toLowerCase());
+        }
+
+        if (!extension.getArtifact().isPresent()) {
+            throw new GradleException("No artifacts set");
+        }
+
+        return extension.getArtifact().get();
     }
 
     /**

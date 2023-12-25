@@ -98,6 +98,13 @@ publisher {
     // setArtifact(jar.getArchiveFile().get())
     // If this is a task, the task specified will be executed before publishing
     setArtifact(jar)
+    
+    // Override the artifact uploaded to modrinth
+    // setPlatformArtifact(Platform.Modrinth, "build/libs/mymod.jar")
+    // setPlatformArtifact(Platform.Modrinth, jar.getArchiveFile().get())
+    // If this is a task, the task specified will be executed before publishing
+    // Valid platforms are modrinth, curseforge and github
+    setPlatformArtifact("modrinth", modrinthJar)
 
     // Disable the built in Fractureizer scanner
     setDisableMalwareScanner(true)
@@ -247,6 +254,13 @@ publisher {
     // setArtifact(jar.getArchiveFile().get())
     // If this is a task, the task specified will be executed before publishing
     artifact.set(tasks.jar)
+
+    // Override the artifact uploaded to modrinth
+    // setPlatformArtifact(Platform.Modrinth, "build/libs/mymod.jar")
+    // setPlatformArtifact(Platform.Modrinth, jar.getArchiveFile().get())
+    // If this is a task, the task specified will be executed before publishing
+    // Valid platforms are modrinth, curseforge and github
+    setPlatformArtifact("modrinth", modrinthJar)
 
     // Disable the built in Fractureizer scanner
     disableMalwareScanner.set(true)

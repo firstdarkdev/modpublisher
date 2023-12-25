@@ -7,11 +7,11 @@
 package com.hypherionmc.modpublisher.properties;
 
 /**
- * @author Joseph T. McQuigg
- * Convenience Enum to set the ReleaseType property
+ * @author HypherionSA
+ * Convenience enum to set Platform Artifacts
  */
-public enum ReleaseType {
-    ALPHA,
-    BETA,
-    RELEASE
+public enum Platform {
+    CURSEFORGE,
+    MODRINTH,
+    GITHUB
 }

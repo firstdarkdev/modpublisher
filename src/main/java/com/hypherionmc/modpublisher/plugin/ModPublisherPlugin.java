@@ -6,17 +6,23 @@
  */
 package com.hypherionmc.modpublisher.plugin;
 
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.tasks.CurseUploadTask;
 import com.hypherionmc.modpublisher.tasks.GithubUploadTask;
 import com.hypherionmc.modpublisher.tasks.ModrinthPublishTask;
 import com.hypherionmc.modpublisher.tasks.UploadModTask;
+import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import javax.annotation.Nonnull;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import static com.hypherionmc.modpublisher.Constants.*;
 
@@ -53,21 +59,24 @@ public class ModPublisherPlugin implements Plugin<Project> {
         project.afterEvaluate(c -> {
             try {
                 if (UploadPreChecks.canUploadCurse(project, extension)) {
-                    resolveInputTask(project, extension.getArtifact().get(), curseUploadTask);
+                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.CURSEFORGE, extension);
+                    resolveInputTask(project, artifactObject, curseUploadTask);
                     uploadTask.dependsOn(curseUploadTask);
                 }
             } catch (Exception ignored) {}
 
             try {
                 if (UploadPreChecks.canUploadModrinth(project, extension)) {
-                    resolveInputTask(project, extension.getArtifact().get(), modrinthUploadTask);
+                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.MODRINTH, extension);
+                    resolveInputTask(project, artifactObject, modrinthUploadTask);
                     uploadTask.dependsOn(modrinthUploadTask);
                 }
             } catch (Exception ignored) {}
 
             try {
                 if (UploadPreChecks.canUploadGitHub(project, extension)) {
-                    resolveInputTask(project, extension.getArtifact().get(), gitHubUploadTask);
+                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.GITHUB, extension);
+                    resolveInputTask(project, artifactObject, gitHubUploadTask);
                     uploadTask.dependsOn(gitHubUploadTask);
                 }
             } catch (Exception ignored) {}
@@ -79,6 +88,11 @@ public class ModPublisherPlugin implements Plugin<Project> {
             return;
 
         Task task = null;
+
+        if (inTask instanceof Provider) {
+            Provider<?> p = (Provider<?>) inTask;
+            task = (Task) p.get();
+        }
 
         if (inTask instanceof String) {
             task = project.getTasks().getByName((String) inTask);

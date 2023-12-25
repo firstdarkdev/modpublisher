@@ -8,12 +8,17 @@ package com.hypherionmc.modpublisher.plugin;
 
 import com.hypherionmc.modpublisher.properties.CurseEnvironment;
 import com.hypherionmc.modpublisher.properties.ModLoader;
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.properties.ReleaseType;
 import lombok.Getter;
 import org.gradle.api.Action;
+import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author HypherionSA
@@ -59,7 +64,10 @@ public class ModPublisherGradleExtension {
     @Getter private final Property<String> curseEnvironment;
 
     // The file, or string location of the file that will be uploaded
-    @Getter private final Property<Object> artifact;
+    @Getter Property<Object> artifact;
+
+    // Override Dependencies for Platforms
+    @Getter private HashMap<String, Object> artifacts;
 
     // Curse Dependencies
     @Getter private final Dependencies curseDepends;
@@ -94,6 +102,7 @@ public class ModPublisherGradleExtension {
         this.gameVersions = project.getObjects().listProperty(String.class).empty();
         this.loaders = project.getObjects().listProperty(String.class).empty();
         this.curseEnvironment = project.getObjects().property(String.class).convention("both");
+        this.artifacts = new HashMap<>();
         this.artifact = project.getObjects().property(Object.class);
 
         // Control Curseforge Dependencies
@@ -114,6 +123,30 @@ public class ModPublisherGradleExtension {
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
         this.additionalFiles = project.getObjects().listProperty(Object.class).empty();
+    }
+
+    /**
+     * Helper method to override an upload artifact for a platform
+     * @param platform The {@link Platform} the artifact is for
+     * @param artifact The artifact object to resolve
+     */
+    public void setPlatformArtifact(Platform platform, Object artifact) {
+        this.setPlatformArtifact(platform.toString().toLowerCase(), artifact);
+    }
+
+    /**
+     * Helper method to override an upload artifact for a platform
+     * @param platform The platform the override is for
+     * @param artifact The artifact object to resolve
+     */
+    public void setPlatformArtifact(String platform, Object artifact) {
+        if (this.artifacts == null) artifacts = new HashMap<>();
+
+        if (this.artifacts.containsKey(platform)) {
+            throw new GradleException("Artifact already added for platform " + platform);
+        }
+
+        this.artifacts.put(platform, artifact);
     }
 
     /**

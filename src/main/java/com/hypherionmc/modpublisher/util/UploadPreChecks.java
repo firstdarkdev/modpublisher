@@ -7,6 +7,7 @@
 package com.hypherionmc.modpublisher.util;
 
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
@@ -17,13 +18,15 @@ import java.util.List;
 
 public class UploadPreChecks {
 
-    public static void checkRequiredValues(Project project, ModPublisherGradleExtension extension) throws Exception {
+    public static void checkRequiredValues(Project project, Platform platform, ModPublisherGradleExtension extension) throws Exception {
         // Check if API Keys are configured
         if (extension.getApiKeys() == null) {
             throw new Exception("Missing apiKeys config. Artifacts cannot be uploaded without this");
         }
 
-        if (!extension.getArtifact().isPresent()) {
+        Object artifactObject = CommonUtil.getPlatformArtifact(platform, extension);
+
+        if (artifactObject == null) {
             throw new Exception("Missing artifact. Cannot continue");
         }
 
@@ -32,7 +35,7 @@ public class UploadPreChecks {
         }
 
         if (!extension.getDisableMalwareScanner().get()) {
-            JarInfectionScanner.scan(project, extension.getArtifact().get());
+            JarInfectionScanner.scan(project, artifactObject);
         }
     }
 

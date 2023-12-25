@@ -7,6 +7,7 @@
 package com.hypherionmc.modpublisher.tasks;
 
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import me.hypherionmc.curseupload.CurseUploadApi;
@@ -49,7 +50,7 @@ public class CurseUploadTask extends DefaultTask {
     @TaskAction
     public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to Curseforge");
-        UploadPreChecks.checkRequiredValues(project, extension);
+        UploadPreChecks.checkRequiredValues(project, Platform.CURSEFORGE, extension);
         boolean canUpload = UploadPreChecks.canUploadCurse(project, extension);
         if (!canUpload)
             return;
@@ -59,11 +60,11 @@ public class CurseUploadTask extends DefaultTask {
 
         // Enable debug mode if required
         uploadApi.setDebug(extension.getDebug().get());
-
-        File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
+        Object artifactObject = CommonUtil.getPlatformArtifact(Platform.CURSEFORGE, extension);
+        File uploadFile = CommonUtil.resolveFile(project, artifactObject);
 
         if (uploadFile == null || !uploadFile.exists())
-            throw new FileNotFoundException("Cannot find file " + extension.getArtifact().get().toString());
+            throw new FileNotFoundException("Cannot find file " + artifactObject);
 
         CurseArtifact artifact = new CurseArtifact(uploadFile, Long.parseLong(extension.getCurseID().get()));
         artifact.changelog(CommonUtil.resolveString(extension.getChangelog().get()));

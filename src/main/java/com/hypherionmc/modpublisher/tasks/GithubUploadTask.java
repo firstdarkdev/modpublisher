@@ -7,6 +7,7 @@
 package com.hypherionmc.modpublisher.tasks;
 
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
+import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import com.hypherionmc.modpublisher.util.UserAgentInterceptor;
@@ -47,7 +48,7 @@ public class GithubUploadTask extends DefaultTask {
     @TaskAction
     public void upload() throws Exception {
         project.getLogger().lifecycle("Uploading to GitHub");
-        UploadPreChecks.checkRequiredValues(project, extension);
+        UploadPreChecks.checkRequiredValues(project, Platform.GITHUB, extension);
         boolean canUpload = UploadPreChecks.canUploadGitHub(project, extension);
         if (!canUpload)
             return;
@@ -65,10 +66,11 @@ public class GithubUploadTask extends DefaultTask {
                 .withOAuthToken(extension.getApiKeys().getGithub())
                 .withConnector(new OkHttpGitHubConnector(client)).build();
 
-        File uploadFile = CommonUtil.resolveFile(project, extension.getArtifact().get());
+        Object artifactObject = CommonUtil.getPlatformArtifact(Platform.GITHUB, extension);
+        File uploadFile = CommonUtil.resolveFile(project, artifactObject);
 
         if (uploadFile == null || !uploadFile.exists())
-            throw new FileNotFoundException("Cannot find file " + extension.getArtifact().get());
+            throw new FileNotFoundException("Cannot find file " + artifactObject);
 
         if (gitHub == null)
             return;

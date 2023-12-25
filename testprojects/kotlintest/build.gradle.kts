@@ -23,6 +23,12 @@ tasks.test {
     useJUnitPlatform()
 }
 
+val dummyTask = tasks.register("createDummyJar", Jar::class) {
+    // Configure the JAR task to have no files
+    from(setOf<File>()) // Empty set of files
+    archiveFileName.set("dummy.jar") // Set the desired name for the JAR file
+}
+
 publisher {
     apiKeys {
         curseforge(System.getenv("CURSE_TOKEN"))
@@ -45,6 +51,7 @@ publisher {
     disableMalwareScanner.set(false)
     disableEmptyJarCheck.set(true)
     artifact.set(tasks.jar)
+    setPlatformArtifact("modrinth", dummyTask)
     useModrinthStaging.set(false)
     additionalFiles.set(listOf(tasks.jar))
 
