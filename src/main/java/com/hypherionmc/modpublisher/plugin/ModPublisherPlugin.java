@@ -21,9 +21,6 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import javax.annotation.Nonnull;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-
 import static com.hypherionmc.modpublisher.Constants.*;
 
 /**

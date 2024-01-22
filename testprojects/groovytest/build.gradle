@@ -47,6 +47,13 @@ publisher {
     setPlatformArtifact(com.hypherionmc.modpublisher.properties.Platform.MODRINTH, createDummyJar)
     setDisableEmptyJarCheck(true)
     addAdditionalFile(jar)
+    setJavaVersions("Java 8", "Java 11")
+
+    addAdditionalFile {
+        artifact jar
+        displayName "Some Name"
+        changelog "Hello Changelog"
+    }
 
     modrinthDepends {
         required "fabric-api", "craterlib"

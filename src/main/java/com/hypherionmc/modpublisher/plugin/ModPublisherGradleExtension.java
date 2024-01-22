@@ -17,7 +17,6 @@ import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -85,7 +84,7 @@ public class ModPublisherGradleExtension {
     @Getter private final Property<Boolean> useModrinthStaging;
 
     // Allow uploading additional files
-    @Getter private final ListProperty<Object> additionalFiles;
+    @Getter private final ListProperty<AdditionalFile> additionalFiles;
 
     @Getter private final ListProperty<String> javaVersions;
 
@@ -125,7 +124,7 @@ public class ModPublisherGradleExtension {
         this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(false);
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
-        this.additionalFiles = project.getObjects().listProperty(Object.class).empty();
+        this.additionalFiles = project.getObjects().listProperty(AdditionalFile.class).empty();
     }
 
     /**
@@ -265,7 +264,9 @@ public class ModPublisherGradleExtension {
      * @param file The file
      */
     public void addAdditionalFile(Object file) {
-        this.additionalFiles.add(file);
+        AdditionalFile additionalFile = new AdditionalFile();
+        additionalFile.artifact = file;
+        this.additionalFiles.add(additionalFile);
     }
 
     /**
@@ -273,7 +274,21 @@ public class ModPublisherGradleExtension {
      * @param file The files
      */
     public void addAdditionalFile(Object... file) {
-        this.additionalFiles.addAll(file);
+        for (Object f : file) {
+            AdditionalFile additionalFile = new AdditionalFile();
+            additionalFile.artifact = f;
+            this.additionalFiles.add(additionalFile);
+        }
+    }
+
+    /**
+     * DSL support for adding a file with a custom display name and changelog
+     * @param file The DSL object containing the file data
+     */
+    public void addAdditionalFile(Action<AdditionalFile> file) {
+        AdditionalFile additionalFile = new AdditionalFile();
+        file.execute(additionalFile);
+        this.additionalFiles.add(additionalFile);
     }
 
     @Getter
@@ -405,6 +420,44 @@ public class ModPublisherGradleExtension {
          */
         public void embedded(String... deps) {
             embedded.addAll(deps);
+        }
+    }
+
+    /**
+     * Helper Class to add additional files with a custom Changelog and Display name
+     */
+    @Getter
+    public static class AdditionalFile {
+        private Object artifact;
+        private String displayName;
+        private String changelog;
+
+        public void configure(Action<AdditionalFile> action) {
+            action.execute(this);
+        }
+
+        /**
+         * Set the artifact
+         * @param file The File, Task or String
+         */
+        public void artifact(Object file) {
+            this.artifact = file;
+        }
+
+        /**
+         * Set the artifact Display Name
+         * @param displayName The display name
+         */
+        public void displayName(String displayName) {
+            this.displayName = displayName;
+        }
+
+        /**
+         * Set the artifact changelog
+         * @param changelog The changelog
+         */
+        public void changelog(String changelog) {
+            this.changelog = changelog;
         }
     }
 }

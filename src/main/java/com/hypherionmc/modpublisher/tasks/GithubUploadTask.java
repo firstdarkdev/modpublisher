@@ -117,8 +117,8 @@ public class GithubUploadTask extends DefaultTask {
             throw new IOException("Failed to upload release to github. No error found");
 
         if (extension.getAdditionalFiles().isPresent()) {
-            for (Object file : extension.getAdditionalFiles().get()) {
-                ghRelease.uploadAsset(CommonUtil.resolveFile(project, file), "application/octet-stream");
+            for (ModPublisherGradleExtension.AdditionalFile file : extension.getAdditionalFiles().get()) {
+                ghRelease.uploadAsset(CommonUtil.resolveFile(project, file.getArtifact()), "application/octet-stream");
             }
         }
 

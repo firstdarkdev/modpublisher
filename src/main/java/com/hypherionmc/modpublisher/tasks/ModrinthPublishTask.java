@@ -146,8 +146,8 @@ public class ModrinthPublishTask extends DefaultTask {
         }
 
         if (extension.getAdditionalFiles().isPresent()) {
-            for (Object file : extension.getAdditionalFiles().get()) {
-                uploadFiles.add(CommonUtil.resolveFile(project, file));
+            for (ModPublisherGradleExtension.AdditionalFile file : extension.getAdditionalFiles().get()) {
+                uploadFiles.add(CommonUtil.resolveFile(project, file.getArtifact()));
             }
         }
         builder.files(uploadFiles);

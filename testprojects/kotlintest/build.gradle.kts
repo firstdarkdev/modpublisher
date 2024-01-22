@@ -54,7 +54,13 @@ publisher {
     artifact.set(tasks.jar)
     setPlatformArtifact("modrinth", dummyTask)
     useModrinthStaging.set(false)
-    additionalFiles.set(listOf(tasks.jar))
+    addAdditionalFile(tasks.jar)
+
+    addAdditionalFile {
+        artifact(tasks.jar)
+        displayName("Test Name")
+        changelog("Some Changelog")
+    }
 
     curseDepends {
         required("fabric-api", "craterlib")

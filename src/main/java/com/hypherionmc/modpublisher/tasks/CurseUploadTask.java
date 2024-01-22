@@ -149,8 +149,9 @@ public class CurseUploadTask extends DefaultTask {
         }
 
         if (extension.getAdditionalFiles().isPresent()) {
-            for (Object file : extension.getAdditionalFiles().get()) {
-                artifact.addAdditionalFile(CommonUtil.resolveFile(project, file));
+            for (ModPublisherGradleExtension.AdditionalFile file : extension.getAdditionalFiles().get()) {
+                String changelog = file.getChangelog() == null ? null : CommonUtil.resolveString(file.getChangelog());
+               artifact.addAdditionalFile(CommonUtil.resolveFile(project, file.getArtifact()), file.getDisplayName(), changelog);
             }
         }
 
