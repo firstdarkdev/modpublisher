@@ -150,7 +150,6 @@ public class CurseUploadTask extends DefaultTask {
 
         if (extension.getAdditionalFiles().isPresent()) {
             for (Object file : extension.getAdditionalFiles().get()) {
-                System.err.println(file);
                 artifact.addAdditionalFile(CommonUtil.resolveFile(project, file));
             }
         }
