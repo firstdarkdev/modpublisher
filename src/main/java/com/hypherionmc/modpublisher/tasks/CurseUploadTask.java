@@ -129,6 +129,12 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
+        if (extension.getJavaVersions().isPresent() && !extension.getJavaVersions().get().isEmpty()) {
+            for (String javaVersion : extension.getJavaVersions().get()) {
+                artifact.javaVersion(javaVersion);
+            }
+        }
+
         if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
             artifact.displayName(extension.getDisplayName().get());
         } else {

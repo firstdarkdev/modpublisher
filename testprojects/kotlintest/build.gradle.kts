@@ -48,6 +48,7 @@ publisher {
     setGameVersions("1.19.3", "1.19.4")
     setLoaders(ModLoader.FORGE, ModLoader.FABRIC)
     setCurseEnvironment(CurseEnvironment.CLIENT)
+    setJavaVersions("Java 8", "Java 11")
     disableMalwareScanner.set(false)
     disableEmptyJarCheck.set(true)
     artifact.set(tasks.jar)

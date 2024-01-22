@@ -87,6 +87,8 @@ public class ModPublisherGradleExtension {
     // Allow uploading additional files
     @Getter private final ListProperty<Object> additionalFiles;
 
+    @Getter private final ListProperty<String> javaVersions;
+
     private final Project project;
 
     public ModPublisherGradleExtension(Project project) {
@@ -111,6 +113,7 @@ public class ModPublisherGradleExtension {
         ListProperty<String> curseOptional = project.getObjects().listProperty(String.class).empty();
         ListProperty<String> curseEmbedded = project.getObjects().listProperty(String.class).empty();
         this.curseDepends = new Dependencies(curseRequired, curseOptional, curseIncompatible, curseEmbedded);
+        this.javaVersions = project.getObjects().listProperty(String.class).empty();
 
         // Control Modrinth Dependencies
         ListProperty<String> modrinthRequired = project.getObjects().listProperty(String.class).empty();
@@ -220,6 +223,16 @@ public class ModPublisherGradleExtension {
     public void setLoaders(ModLoader... loader) {
         for (ModLoader l : loader) {
             this.loaders.add(l.toString());
+        }
+    }
+
+    /**
+     * Add supported Java Versions for Curseforge
+     * @param version Version or Versions to add. For example: setJavaVersions("Java 8", "Java 11")
+     */
+    public void setJavaVersions(String... version) {
+        for (String jv : version) {
+            this.javaVersions.add(jv);
         }
     }
 
