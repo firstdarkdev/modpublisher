@@ -76,7 +76,7 @@ public class ModrinthPublishTask extends DefaultTask {
 
         final List<File> uploadFiles = new ArrayList<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();
-        builder.projectId(extension.getModrinthID().get());
+        builder.projectId(resolveSlug(modrinthAPI, extension.getModrinthID().get()));
         builder.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
         builder.versionType(ProjectVersion.VersionType.valueOf(extension.getVersionType().get().toUpperCase()));
         builder.versionNumber(extension.getVersion().get());
