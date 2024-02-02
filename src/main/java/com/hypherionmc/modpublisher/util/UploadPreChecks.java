@@ -15,6 +15,7 @@ import org.gradle.api.Project;
 import java.io.File;
 import java.nio.file.*;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class UploadPreChecks {
 
@@ -122,5 +123,9 @@ public class UploadPreChecks {
         }
 
         system.close();
+    }
+
+    public static boolean isModrinthID(String testInput) {
+        return Pattern.compile("^[0-9a-zA-Z]+$").matcher(testInput).matches();
     }
 }

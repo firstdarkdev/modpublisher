@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author HypherionSA
@@ -114,28 +115,28 @@ public class ModrinthPublishTask extends DefaultTask {
             List<ProjectVersion.ProjectDependency> dependencies = new ArrayList<>();
             extension.getModrinthDepends().getRequired().get().forEach(rd -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
-                dependency.setProjectId(rd);
+                dependency.setProjectId(resolveSlug(modrinthAPI, rd));
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.REQUIRED);
                 dependencies.add(dependency);
             });
 
             extension.getModrinthDepends().getOptional().get().forEach(od -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
-                dependency.setProjectId(od);
+                dependency.setProjectId(resolveSlug(modrinthAPI, od));
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.OPTIONAL);
                 dependencies.add(dependency);
             });
 
             extension.getModrinthDepends().getIncompatible().get().forEach(id -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
-                dependency.setProjectId(id);
+                dependency.setProjectId(resolveSlug(modrinthAPI, id));
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.INCOMPATIBLE);
                 dependencies.add(dependency);
             });
 
             extension.getModrinthDepends().getEmbedded().get().forEach(ed -> {
                 ProjectVersion.ProjectDependency dependency = new ProjectVersion.ProjectDependency();
-                dependency.setProjectId(ed);
+                dependency.setProjectId(resolveSlug(modrinthAPI, ed));
                 dependency.setDependencyType(ProjectVersion.ProjectDependencyType.EMBEDDED);
                 dependencies.add(dependency);
             });
@@ -168,6 +169,15 @@ public class ModrinthPublishTask extends DefaultTask {
                 extension.getModrinthID().get(),
                 projectVersion.getId()
         );
+    }
+
+    private String resolveSlug(ModrinthAPI api, String slug) {
+        if (UploadPreChecks.isModrinthID(slug))
+            return slug;
+
+        return Objects.requireNonNull(
+                api.projects().getProjectIdBySlug(slug).join(),
+                "Failed to resolve dependency project ID: " + slug);
     }
 
 }
