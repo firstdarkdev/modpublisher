@@ -8,10 +8,12 @@ public class ModrinthIDTest {
 
     @Test
     public void testModrinthId() {
-        String id = "P7dR8mSH";
-        boolean valid = UploadPreChecks.isModrinthID(id);
+        String[] tests = new String[] { "P7dR8mSH", "ModMenu", "sdlink" };
 
-        assertTrue(valid, "Input was not detected as a valid BASE62 String");
+        for (String s : tests) {
+            boolean valid = UploadPreChecks.isModrinthID(s);
+            assertTrue(valid, "Input was not detected as a valid BASE62 String");
+        }
     }
 
     @Test

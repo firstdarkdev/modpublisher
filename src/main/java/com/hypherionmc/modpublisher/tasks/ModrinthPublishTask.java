@@ -172,12 +172,9 @@ public class ModrinthPublishTask extends DefaultTask {
     }
 
     private String resolveSlug(ModrinthAPI api, String slug) {
-        if (UploadPreChecks.isModrinthID(slug))
-            return slug;
-
         return Objects.requireNonNull(
                 api.projects().getProjectIdBySlug(slug).join(),
-                "Failed to resolve dependency project ID: " + slug);
+                "Failed to resolve project ID: " + slug);
     }
 
 }
