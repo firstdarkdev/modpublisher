@@ -41,6 +41,9 @@ public class ModPublisherGradleExtension {
     // GitHub Repo. username/repo or URL
     @Getter private final Property<String> githubRepo;
 
+    // GitHub Release tag. defaults to Version
+    @Getter private final Property<String> githubTag;
+
     // Type of release. Valid entries: release, beta, alpha
     @Getter private final Property<String> versionType;
 
@@ -99,6 +102,7 @@ public class ModPublisherGradleExtension {
         this.versionType = project.getObjects().property(String.class).convention("release");
         this.changelog = project.getObjects().property(Object.class);
         this.version = project.getObjects().property(String.class);
+        this.githubTag = project.getObjects().property(String.class).convention(this.version);
         this.displayName = project.getObjects().property(String.class);
         this.gameVersions = project.getObjects().listProperty(String.class).empty();
         this.loaders = project.getObjects().listProperty(String.class).empty();

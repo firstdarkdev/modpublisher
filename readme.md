@@ -76,6 +76,9 @@ publisher {
     // Required for Modrinth/GitHub
     setVersion("1.20.2-${project.version}")
     
+    // Tag to use for GitHub release. Defaults to version
+    setGithubTag("v${project.version}")
+    
     // Fancy display name for the upload.
     // Will default to the project version if not set
     setDisplayName("[1.20.x] Simple Discord Link - ${project.version}")
@@ -241,6 +244,9 @@ publisher {
     
     // Required for Modrinth/GitHub
     version.set("1.3.0")
+
+    // Tag to use for GitHub release. Defaults to version
+    githubTag.set("v${project.version}")
     
     // Fancy display name for the upload.
     // Will default to the project version if not set
