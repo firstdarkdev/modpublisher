@@ -47,7 +47,7 @@ publisher {
     setPlatformArtifact(com.hypherionmc.modpublisher.properties.Platform.MODRINTH, createDummyJar)
     setDisableEmptyJarCheck(true)
     addAdditionalFile(jar)
-    setJavaVersions("Java 8", "Java 11")
+    setJavaVersions(JavaVersion.VERSION_1_8, "Java 11", 17)
 
     addAdditionalFile {
         artifact jar

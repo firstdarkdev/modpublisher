@@ -11,8 +11,10 @@ import com.hypherionmc.modpublisher.properties.ModLoader;
 import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.properties.ReleaseType;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
@@ -86,7 +88,7 @@ public class ModPublisherGradleExtension {
     // Allow uploading additional files
     @Getter private final ListProperty<AdditionalFile> additionalFiles;
 
-    @Getter private final ListProperty<String> javaVersions;
+    @Getter private final ListProperty<JavaVersion> javaVersions;
 
     private final Project project;
 
@@ -112,7 +114,7 @@ public class ModPublisherGradleExtension {
         ListProperty<String> curseOptional = project.getObjects().listProperty(String.class).empty();
         ListProperty<String> curseEmbedded = project.getObjects().listProperty(String.class).empty();
         this.curseDepends = new Dependencies(curseRequired, curseOptional, curseIncompatible, curseEmbedded);
-        this.javaVersions = project.getObjects().listProperty(String.class).empty();
+        this.javaVersions = project.getObjects().listProperty(JavaVersion.class).empty();
 
         // Control Modrinth Dependencies
         ListProperty<String> modrinthRequired = project.getObjects().listProperty(String.class).empty();
@@ -226,12 +228,24 @@ public class ModPublisherGradleExtension {
     }
 
     /**
-     * Add supported Java Versions for Curseforge
-     * @param version Version or Versions to add. For example: setJavaVersions("Java 8", "Java 11")
+     * Add supported Java Versions, currently only used for Curseforge.
+     * <p>
+     * Accepts any object that can be converted to a {@link JavaVersion} using {@link JavaVersion#toVersion(Object)}.
+     * <p>
+     * Strings will have the optional prefix {@code "Java "} removed before being parsed,
+     * to support versions formatted as {@code "Java 8"}.
+     * <p>
+     * Example: {@code setJavaVersions(8, JavaVersion.VERSION_11, "16", "Java 17")}
+     *
+     * @param version Version or Versions to add.
      */
-    public void setJavaVersions(String... version) {
-        for (String jv : version) {
-            this.javaVersions.add(jv);
+    public void setJavaVersions(Object... version) {
+        for (Object v : version) {
+            if (v instanceof String) {
+                // Handle "curseforge format" versions, e.g. "Java 8"
+                v = StringUtils.removeStart((String) v, "Java ");
+            }
+            this.javaVersions.add(JavaVersion.toVersion(v));
         }
     }
 
