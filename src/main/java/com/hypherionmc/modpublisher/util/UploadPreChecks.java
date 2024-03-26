@@ -12,11 +12,13 @@ import com.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Property;
 
 import java.io.File;
 import java.nio.file.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class UploadPreChecks {
 
@@ -82,6 +84,10 @@ public class UploadPreChecks {
         if (StringUtils.isBlank(extension.getGithubTag().getOrNull())) {
             // githubTag defaults to version; if tag is missing, so is version
             throw new Exception("Neither Version or GithubTag are defined. At least one is REQUIRED by github");
+        }
+
+        if (Stream.of(extension.getCreateGithubRelease(), extension.getUpdateGithubRelease()).noneMatch(Property::get)) {
+            throw new Exception("createGithubRelease and updateGithubRelease are both disabled, at least one must be enabled");
         }
 
         if (extension.getApiKeys() != null && !extension.getApiKeys().getGithub().isEmpty()) {

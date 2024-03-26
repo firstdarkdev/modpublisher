@@ -78,6 +78,12 @@ publisher {
     
     // Tag to use for GitHub release. Defaults to version
     setGithubTag("v${project.version}")
+
+    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
+    setCreateGithubRelease(true)
+
+    // Whether to update the GitHub release if it already exists. Defaults to true
+    setUpdateGithubRelease(true)
     
     // Fancy display name for the upload.
     // Will default to the project version if not set
@@ -247,6 +253,12 @@ publisher {
 
     // Tag to use for GitHub release. Defaults to version
     githubTag.set("v${project.version}")
+    
+    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
+    createGithubRelease.set(true)
+    
+    // Whether to update the GitHub release if it already exists. Defaults to true
+    updateGithubRelease.set(true)
     
     // Fancy display name for the upload.
     // Will default to the project version if not set

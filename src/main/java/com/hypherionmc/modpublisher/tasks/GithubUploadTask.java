@@ -100,6 +100,11 @@ public class GithubUploadTask extends DefaultTask {
 
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {
+            if (!extension.getCreateGithubRelease().get()) {
+                project.getLogger().warn("Create GitHub Release is disabled and Github Release with tag {} does not exist", tag);
+                return;
+            }
+
             GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, tag);
 
             // Use the first non-empty value in [displayName, version, githubTag]
@@ -115,6 +120,9 @@ public class GithubUploadTask extends DefaultTask {
             releaseBuilder.draft(true);
             releaseBuilder.commitish(ghRepository.getDefaultBranch());
             ghRelease = releaseBuilder.create();
+        } else if (!extension.getUpdateGithubRelease().get()) {
+            project.getLogger().warn("Update GitHub Release is disabled and Github Release with tag {} already exists", tag);
+            return;
         }
 
         if (ghRelease == null)

@@ -77,6 +77,12 @@ public class ModPublisherGradleExtension {
     // Modrinth Dependencies
     @Getter private final Dependencies modrinthDepends;
 
+    // Create GitHub release if missing
+    @Getter private final Property<Boolean> createGithubRelease;
+
+    // Update GitHub release if exists
+    @Getter private final Property<Boolean> updateGithubRelease;
+
     // Disable Jar Scanning
     @Getter private final Property<Boolean> disableMalwareScanner;
 
@@ -125,6 +131,8 @@ public class ModPublisherGradleExtension {
         ListProperty<String> modrinthEmbedded = project.getObjects().listProperty(String.class).empty();
         this.modrinthDepends = new Dependencies(modrinthRequired, modrinthOptional, modrinthIncompatible, modrinthEmbedded);
 
+        this.createGithubRelease = project.getObjects().property(Boolean.class).convention(true);
+        this.updateGithubRelease = project.getObjects().property(Boolean.class).convention(true);
         this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(false);
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
