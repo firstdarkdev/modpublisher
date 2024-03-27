@@ -105,6 +105,17 @@ public class GithubUploadTask extends DefaultTask {
                 return;
             }
 
+            if (!extension.getCreateGithubTag().get()) {
+                // FIXME It'd be nice to get tag by name, but GHRepository doesn't expose an API to do that
+                // For now, just iterate thorough all tags on the repo...
+                for (GHTag ghTag : ghRepository.listTags()) {
+                    if (tag.equals(ghTag.getName())) {
+                        project.getLogger().warn("Create tag for GitHub Release is disabled and tag {} already exists", tag);
+                        return;
+                    }
+                }
+            }
+
             GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, tag);
 
             // Use the first non-empty value in [displayName, version, githubTag]
