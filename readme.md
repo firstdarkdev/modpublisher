@@ -110,7 +110,8 @@ publisher {
     setDisableMalwareScanner(true)
     
     // Add supported java versions. Currently only used by CurseForge
-    setJavaVersions("Java 8", "Java 11")
+    // Supports anything that can be parsed using JavaVersion.toVersion()
+    setJavaVersions(JavaVersion.VERSION_1_8, 11)
     
     // Safety check to check if the artifact contains a valid mod metadata entry,
     // which could possibly mean that the jar is empty
@@ -282,7 +283,8 @@ publisher {
     disableEmptyJarCheck.set(true)
 
     // Add supported java versions. Currently only used by CurseForge
-    setJavaVersions("Java 8", "Java 11")
+    // Supports anything that can be parsed using JavaVersion.toVersion()
+    setJavaVersions(JavaVersion.VERSION_1_8, 11)
     
     // Additional files to upload. Same as artifact, this can be a task, file or string
     additionalFiles.set(listOf(tasks.jar))

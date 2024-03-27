@@ -16,6 +16,7 @@ import me.hypherionmc.curseupload.constants.CurseReleaseType;
 import me.hypherionmc.curseupload.requests.CurseArtifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.tasks.TaskAction;
 
@@ -130,8 +131,8 @@ public class CurseUploadTask extends DefaultTask {
         }
 
         if (extension.getJavaVersions().isPresent() && !extension.getJavaVersions().get().isEmpty()) {
-            for (String javaVersion : extension.getJavaVersions().get()) {
-                artifact.javaVersion(javaVersion);
+            for (JavaVersion javaVersion : extension.getJavaVersions().get()) {
+                artifact.javaVersion("Java " + javaVersion.getMajorVersion());
             }
         }
 
