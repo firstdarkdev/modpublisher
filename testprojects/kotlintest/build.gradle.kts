@@ -62,6 +62,13 @@ publisher {
         changelog("Some Changelog")
     }
 
+    github {
+        tag = "v${project.version}"
+        createTag = true
+        createRelease = true
+        updateRelease = true
+    }
+
     curseDepends {
         required("fabric-api", "craterlib")
         optional("optional-mod", "another-mod")

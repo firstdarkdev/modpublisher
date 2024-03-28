@@ -11,6 +11,7 @@ import com.hypherionmc.modpublisher.properties.ModLoader;
 import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.properties.ReleaseType;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
@@ -18,6 +19,7 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 
@@ -70,6 +72,9 @@ public class ModPublisherGradleExtension {
     // Override Dependencies for Platforms
     @Getter private HashMap<String, Object> artifacts;
 
+    // GitHub options
+    @Getter private final GithubConfig github;
+
     // Curse Dependencies
     @Getter private final Dependencies curseDepends;
 
@@ -107,6 +112,9 @@ public class ModPublisherGradleExtension {
         this.curseEnvironment = project.getObjects().property(String.class).convention("both");
         this.artifacts = new HashMap<>();
         this.artifact = project.getObjects().property(Object.class);
+
+        // GitHub config
+        this.github = new GithubConfig();
 
         // Control Curseforge Dependencies
         ListProperty<String> curseRequired = project.getObjects().listProperty(String.class).empty();
@@ -159,6 +167,14 @@ public class ModPublisherGradleExtension {
      */
     public void apiKeys(Action<ApiKeys> action) {
         action.execute(apiKeys);
+    }
+
+    /**
+     * Helper Method to create the github extension with DSL
+     * @param action The configured github DSL to apply
+     */
+    public void github(Action<GithubConfig> action) {
+        action.execute(github);
     }
 
     /**
@@ -473,6 +489,44 @@ public class ModPublisherGradleExtension {
         public void changelog(String changelog) {
             this.changelog = changelog;
         }
+    }
+
+    /**
+     * Options related to publishing GitHub Releases
+     */
+    @Getter
+    @Setter
+    public class GithubConfig {
+
+        /**
+         * GitHub Release tag. Defaults to Version
+         */
+        private String tag = ModPublisherGradleExtension.this.version.getOrNull();
+
+        /**
+         * GitHub Repo. username/repo or URL
+         * <p>
+         * Overrides {@link ModPublisherGradleExtension#getGithubRepo() githubRepo}
+         */
+        private String repo = ModPublisherGradleExtension.this.githubRepo.getOrNull();
+
+        /**
+         * Create GitHub tag if missing
+         */
+        @ApiStatus.Experimental
+        private boolean createTag = true;
+
+        /**
+         * Create GitHub release if missing
+         */
+        @ApiStatus.Experimental
+        private boolean createRelease = true;
+
+        /**
+         * Update GitHub release if exists
+         */
+        @ApiStatus.Experimental
+        private boolean updateRelease = true;
     }
 }
 

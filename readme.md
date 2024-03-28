@@ -134,6 +134,24 @@ publisher {
 Additional values that can be added to the above:
 
 ```groovy
+// GitHub options
+github {
+    // GitHub repo to publish to. Overrides githubRepo
+    repo = "OWNER/REPO"
+
+    // Tag to use for GitHub release. Defaults to version
+    tag = "v${project.version}"
+
+    // Whether to create a tag for the GitHub release, if one doesn't exist yet. Defaults to true
+    createTag = true
+
+    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
+    createRelease = true
+
+    // Whether to update the GitHub release if it already exists. Defaults to true
+    updateRelease = true
+}
+
 // Modrinth Dependencies.
 // Accepts a slug or id
 modrinthDepends {
@@ -303,6 +321,24 @@ publisher {
 Additional values that can be added to the above:
 
 ```kotlin
+// GitHub options
+github {
+    // GitHub repo to publish to. Overrides githubRepo
+    repo = "OWNER/REPO"
+    
+    // Tag to use for GitHub release. Defaults to version
+    tag = "v${project.version}"
+
+    // Whether to create a tag for the GitHub release, if one doesn't exist yet. Defaults to true
+    createTag = true
+
+    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
+    createRelease = true
+
+    // Whether to update the GitHub release if it already exists. Defaults to true
+    updateRelease = true
+}
+
 // Modrinth Dependencies.
 // Accepts a slug or id
 modrinthDepends {

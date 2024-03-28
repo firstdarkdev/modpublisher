@@ -12,8 +12,10 @@ import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import com.hypherionmc.modpublisher.util.UserAgentInterceptor;
 import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskAction;
 import org.kohsuke.github.*;
 import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
@@ -23,6 +25,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
 /**
  * @author HypherionSA
  * Sub-Task to handle GitHub publishing. This task will only be executed if
@@ -82,34 +86,58 @@ public class GithubUploadTask extends DefaultTask {
             return;
         }
 
-        final String uploadRepo = CommonUtil.cleanGithubUrl(extension.getGithubRepo().get());
+        final String uploadRepo = CommonUtil.cleanGithubUrl(extension.getGithub().getRepo());
 
         GHRepository ghRepository = gitHub.getRepository(uploadRepo);
 
+        final String tag = extension.getGithub().getTag();
+
         // Try to find an existing release.
         // If one is found, the file will be added onto it.
-        GHRelease ghRelease = ghRepository.getReleaseByTagName(extension.getVersion().get());
+        GHRelease ghRelease = ghRepository.getReleaseByTagName(tag);
 
         UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
 
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {
-            GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, extension.getVersion().get());
-
-            if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
-                releaseBuilder.name(extension.getDisplayName().get());
-            } else {
-                releaseBuilder.name(extension.getVersion().get());
+            if (!extension.getGithub().isCreateRelease()) {
+                project.getLogger().warn("Create GitHub Release is disabled and Github Release with tag {} does not exist", tag);
+                return;
             }
+
+            if (!extension.getGithub().isCreateTag()) {
+                // FIXME It'd be nice to get tag by name, but GHRepository doesn't expose an API to do that
+                // For now, just iterate thorough all tags on the repo...
+                for (GHTag ghTag : ghRepository.listTags()) {
+                    if (tag.equals(ghTag.getName())) {
+                        project.getLogger().warn("Create tag for GitHub Release is disabled and tag {} already exists", tag);
+                        return;
+                    }
+                }
+            }
+
+            GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, tag);
+
+            // Use the first non-empty value in [displayName, version, githubTag]
+            String name = Stream.of(extension.getDisplayName(), extension.getVersion())
+                    .map(Provider::getOrNull)
+                    .filter(StringUtils::isNotBlank)
+                    .findFirst()
+                    .orElse(tag);
+
+            releaseBuilder.name(name);
 
             releaseBuilder.body(CommonUtil.resolveString(extension.getChangelog().get()));
             releaseBuilder.draft(true);
             releaseBuilder.commitish(ghRepository.getDefaultBranch());
             ghRelease = releaseBuilder.create();
+        } else if (!extension.getGithub().isUpdateRelease()) {
+            project.getLogger().warn("Update GitHub Release is disabled and Github Release with tag {} already exists", tag);
+            return;
         }
 
         if (ghRelease == null)
-            throw new NullPointerException("Could not get existing or create new Github Release with tag " +  extension.getVersion().get());
+            throw new NullPointerException("Could not get existing or create new Github Release with tag " + tag);
 
         GHAsset asset = ghRelease.uploadAsset(uploadFile, "application/octet-stream");
 
@@ -130,8 +158,9 @@ public class GithubUploadTask extends DefaultTask {
         releaseUpdater.update();
 
         project.getLogger().lifecycle(
-                "Successfully uploaded version {} to {}. {}.",
-                extension.getVersion().get(),
+                "Successfully uploaded {} (tag {}) to {}. {}.",
+                extension.getVersion().map(v -> "version " + v).getOrElse("(empty version)"),
+                tag,
                 ghRepository.getUrl().toString(),
                 ghRelease.getHtmlUrl().toString()
         );

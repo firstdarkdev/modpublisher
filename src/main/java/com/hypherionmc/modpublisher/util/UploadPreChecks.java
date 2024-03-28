@@ -9,13 +9,17 @@ package com.hypherionmc.modpublisher.util;
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.provider.Property;
 
 import java.io.File;
 import java.nio.file.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class UploadPreChecks {
 
@@ -40,12 +44,6 @@ public class UploadPreChecks {
         }
     }
 
-    public static void checkVersion(Project project, ModPublisherGradleExtension extension) throws Exception {
-        if (!extension.getVersion().isPresent() || extension.getVersion().get().isEmpty()) {
-            throw new Exception("Version is not defined. This is REQUIRED by modrinth/github");
-        }
-    }
-
     public static boolean canUploadCurse(Project project, ModPublisherGradleExtension extension) throws Exception {
         if (extension == null)
             return false;
@@ -65,7 +63,10 @@ public class UploadPreChecks {
         if (extension == null)
             return false;
 
-        checkVersion(project, extension);
+        if (StringUtils.isBlank(extension.getVersion().getOrNull())) {
+            throw new Exception("Version is not defined. This is REQUIRED by modrinth");
+        }
+
         // Check that both the Modrinth API key and Project ID is defined
         if (extension.getApiKeys() != null && !extension.getApiKeys().getModrinth().isEmpty()) {
             if (!extension.getModrinthID().isPresent() || extension.getModrinthID().get().isEmpty()) {
@@ -81,10 +82,18 @@ public class UploadPreChecks {
         if (extension == null)
             return false;
 
-        checkVersion(project, extension);
+        if (StringUtils.isBlank(extension.getGithub().getTag())) {
+            // tag defaults to version; if tag is missing, so is version
+            throw new Exception("Neither Version or GitHub Tag are defined. At least one is REQUIRED by github");
+        }
+
+        if (!(extension.getGithub().isCreateRelease() || extension.getGithub().isUpdateRelease())) {
+            throw new Exception("Github options createRelease and updateRelease are both disabled, at least one must be enabled");
+        }
+
         if (extension.getApiKeys() != null && !extension.getApiKeys().getGithub().isEmpty()) {
-            if (!extension.getGithubRepo().isPresent() || extension.getGithubRepo().get().isEmpty()) {
-                throw new Exception("Found GitHub token, but githubRepo is not defined");
+            if (StringUtils.isBlank(extension.getGithub().getRepo())) {
+                throw new Exception("Found GitHub token, but github repo is not defined");
             } else {
                 return true;
             }
