@@ -90,7 +90,7 @@ public class GithubUploadTask extends DefaultTask {
 
         GHRepository ghRepository = gitHub.getRepository(uploadRepo);
 
-        final String tag = extension.getGithubTag().get();
+        final String tag = extension.getGithub().getTag();
 
         // Try to find an existing release.
         // If one is found, the file will be added onto it.
@@ -100,12 +100,12 @@ public class GithubUploadTask extends DefaultTask {
 
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {
-            if (!extension.getCreateGithubRelease().get()) {
+            if (!extension.getGithub().isCreateRelease()) {
                 project.getLogger().warn("Create GitHub Release is disabled and Github Release with tag {} does not exist", tag);
                 return;
             }
 
-            if (!extension.getCreateGithubTag().get()) {
+            if (!extension.getGithub().isCreateTag()) {
                 // FIXME It'd be nice to get tag by name, but GHRepository doesn't expose an API to do that
                 // For now, just iterate thorough all tags on the repo...
                 for (GHTag ghTag : ghRepository.listTags()) {
@@ -131,7 +131,7 @@ public class GithubUploadTask extends DefaultTask {
             releaseBuilder.draft(true);
             releaseBuilder.commitish(ghRepository.getDefaultBranch());
             ghRelease = releaseBuilder.create();
-        } else if (!extension.getUpdateGithubRelease().get()) {
+        } else if (!extension.getGithub().isUpdateRelease()) {
             project.getLogger().warn("Update GitHub Release is disabled and Github Release with tag {} already exists", tag);
             return;
         }

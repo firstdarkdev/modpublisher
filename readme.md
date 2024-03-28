@@ -76,18 +76,6 @@ publisher {
     // Required for Modrinth/GitHub
     setVersion("1.20.2-${project.version}")
     
-    // Tag to use for GitHub release. Defaults to version
-    setGithubTag("v${project.version}")
-
-    // Whether to create a tag for the GitHub release, if one doesn't exist yet. Defaults to true
-    setCreateGithubTag(true)
-
-    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
-    setCreateGithubRelease(true)
-
-    // Whether to update the GitHub release if it already exists. Defaults to true
-    setUpdateGithubRelease(true)
-    
     // Fancy display name for the upload.
     // Will default to the project version if not set
     setDisplayName("[1.20.x] Simple Discord Link - ${project.version}")
@@ -145,6 +133,21 @@ publisher {
 Additional values that can be added to the above:
 
 ```groovy
+// GitHub options
+github {
+    // Tag to use for GitHub release. Defaults to version
+    tag = "v${project.version}"
+
+    // Whether to create a tag for the GitHub release, if one doesn't exist yet. Defaults to true
+    createTag = true
+
+    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
+    createRelease = true
+
+    // Whether to update the GitHub release if it already exists. Defaults to true
+    updateRelease = true
+}
+
 // Modrinth Dependencies.
 // Accepts a slug or id
 modrinthDepends {
@@ -253,18 +256,6 @@ publisher {
     
     // Required for Modrinth/GitHub
     version.set("1.3.0")
-
-    // Tag to use for GitHub release. Defaults to version
-    githubTag.set("v${project.version}")
-
-    // Whether to create a tag for the GitHub release, if one doesn't exist yet. Defaults to true
-    createGithubTag.set(true)
-    
-    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
-    createGithubRelease.set(true)
-    
-    // Whether to update the GitHub release if it already exists. Defaults to true
-    updateGithubRelease.set(true)
     
     // Fancy display name for the upload.
     // Will default to the project version if not set
@@ -325,6 +316,21 @@ publisher {
 Additional values that can be added to the above:
 
 ```kotlin
+// GitHub options
+github {
+    // Tag to use for GitHub release. Defaults to version
+    tag = "v${project.version}"
+
+    // Whether to create a tag for the GitHub release, if one doesn't exist yet. Defaults to true
+    createTag = true
+
+    // Whether to create the GitHub release if it doesn't exist yet. Defaults to true
+    createRelease = true
+
+    // Whether to update the GitHub release if it already exists. Defaults to true
+    updateRelease = true
+}
+
 // Modrinth Dependencies.
 // Accepts a slug or id
 modrinthDepends {

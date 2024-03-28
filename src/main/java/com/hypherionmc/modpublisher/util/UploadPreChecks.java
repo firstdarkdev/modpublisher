@@ -17,6 +17,7 @@ import org.gradle.api.provider.Property;
 import java.io.File;
 import java.nio.file.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -81,13 +82,13 @@ public class UploadPreChecks {
         if (extension == null)
             return false;
 
-        if (StringUtils.isBlank(extension.getGithubTag().getOrNull())) {
-            // githubTag defaults to version; if tag is missing, so is version
-            throw new Exception("Neither Version or GithubTag are defined. At least one is REQUIRED by github");
+        if (StringUtils.isBlank(extension.getGithub().getTag())) {
+            // tag defaults to version; if tag is missing, so is version
+            throw new Exception("Neither Version or GitHub Tag are defined. At least one is REQUIRED by github");
         }
 
-        if (Stream.of(extension.getCreateGithubRelease(), extension.getUpdateGithubRelease()).noneMatch(Property::get)) {
-            throw new Exception("createGithubRelease and updateGithubRelease are both disabled, at least one must be enabled");
+        if (!(extension.getGithub().isCreateRelease() || extension.getGithub().isUpdateRelease())) {
+            throw new Exception("Github options createRelease and updateRelease are both disabled, at least one must be enabled");
         }
 
         if (extension.getApiKeys() != null && !extension.getApiKeys().getGithub().isEmpty()) {

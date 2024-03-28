@@ -55,6 +55,13 @@ publisher {
         changelog "Hello Changelog"
     }
 
+    github {
+        tag = "v${project.version}"
+        createTag = true
+        createRelease = true
+        updateRelease = true
+    }
+
     modrinthDepends {
         required "fabric-api", "craterlib"
         required "fabric-api"
