@@ -17,6 +17,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 
@@ -489,18 +490,28 @@ public class ModPublisherGradleExtension {
         private String tag = ModPublisherGradleExtension.this.version.getOrNull();
 
         /**
+         * GitHub Repo. username/repo or URL
+         * <p>
+         * Overrides {@link ModPublisherGradleExtension#getGithubRepo() githubRepo}
+         */
+        private String repo = ModPublisherGradleExtension.this.githubRepo.getOrNull();
+
+        /**
          * Create GitHub tag if missing
          */
+        @ApiStatus.Experimental
         private boolean createTag = true;
 
         /**
          * Create GitHub release if missing
          */
+        @ApiStatus.Experimental
         private boolean createRelease = true;
 
         /**
          * Update GitHub release if exists
          */
+        @ApiStatus.Experimental
         private boolean updateRelease = true;
     }
 }

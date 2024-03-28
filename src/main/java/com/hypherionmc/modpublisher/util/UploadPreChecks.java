@@ -92,8 +92,8 @@ public class UploadPreChecks {
         }
 
         if (extension.getApiKeys() != null && !extension.getApiKeys().getGithub().isEmpty()) {
-            if (!extension.getGithubRepo().isPresent() || extension.getGithubRepo().get().isEmpty()) {
-                throw new Exception("Found GitHub token, but githubRepo is not defined");
+            if (StringUtils.isBlank(extension.getGithub().getRepo())) {
+                throw new Exception("Found GitHub token, but github repo is not defined");
             } else {
                 return true;
             }

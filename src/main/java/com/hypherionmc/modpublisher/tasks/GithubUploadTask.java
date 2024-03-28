@@ -86,7 +86,7 @@ public class GithubUploadTask extends DefaultTask {
             return;
         }
 
-        final String uploadRepo = CommonUtil.cleanGithubUrl(extension.getGithubRepo().get());
+        final String uploadRepo = CommonUtil.cleanGithubUrl(extension.getGithub().getRepo());
 
         GHRepository ghRepository = gitHub.getRepository(uploadRepo);
 

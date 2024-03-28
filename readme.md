@@ -135,6 +135,9 @@ Additional values that can be added to the above:
 ```groovy
 // GitHub options
 github {
+    // GitHub repo to publish to. Overrides githubRepo
+    repo = "OWNER/REPO"
+
     // Tag to use for GitHub release. Defaults to version
     tag = "v${project.version}"
 
@@ -318,6 +321,9 @@ Additional values that can be added to the above:
 ```kotlin
 // GitHub options
 github {
+    // GitHub repo to publish to. Overrides githubRepo
+    repo = "OWNER/REPO"
+    
     // Tag to use for GitHub release. Defaults to version
     tag = "v${project.version}"
 
