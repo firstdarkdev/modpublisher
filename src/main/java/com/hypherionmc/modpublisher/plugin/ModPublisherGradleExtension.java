@@ -11,7 +11,6 @@ import com.hypherionmc.modpublisher.properties.ModLoader;
 import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.properties.ReleaseType;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
@@ -20,6 +19,7 @@ import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -500,7 +500,6 @@ public class ModPublisherGradleExtension {
      * Options related to publishing GitHub Releases
      */
     @Getter
-    @Setter
     public class GithubConfig {
 
         /**
@@ -509,11 +508,33 @@ public class ModPublisherGradleExtension {
         private String tag = ModPublisherGradleExtension.this.projectVersion.getOrNull();
 
         /**
+         * Optional commitish ref that the release tag will point to. Ignored if tag already exists.
+         * <p>
+         * If {@code null}, the default branch is used.
+         */
+        private @Nullable String target = null;
+
+        /**
          * GitHub Repo. username/repo or URL
          * <p>
          * Overrides {@link ModPublisherGradleExtension#getGithubRepo() githubRepo}
          */
         private String repo = ModPublisherGradleExtension.this.githubRepo.getOrNull();
+
+        /**
+         * Mark whether the release is a draft (unpublished)
+         * <p>
+         * If {@code true}, newly created releases and existing drafts will not be published.
+         * Instead, a draft release is used.
+         * <p>
+         * If {@code false}, the release will be published.
+         * <p>
+         * Existing <em>published</em> releases are always unaffected;
+         * This option does not allow converting a published release to a draft.
+         * <p>
+         * Defaults to {@code false}
+         */
+        private boolean draft = false;
 
         /**
          * Create GitHub tag if missing
@@ -532,6 +553,69 @@ public class ModPublisherGradleExtension {
          */
         @ApiStatus.Experimental
         private boolean updateRelease = true;
+
+        /**
+         * Kotlin Compatibility setter
+         * Set GitHub Release tag. Defaults to Version
+         * @param tag The tag to target
+         */
+        public void tag(String tag) {
+            this.tag = tag;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Should the release be marked as a draft
+         * @param isDraft Is this a draft release
+         */
+        public void draft(boolean isDraft) {
+            this.draft = isDraft;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Should the GitHub tag be created if it doesn't exist
+         * @param createTag Create the tag
+         */
+        public void createTag(boolean createTag) {
+            this.createTag = createTag;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Should the GitHub release be created if it doesn't exist
+         * @param createRelease Create the release
+         */
+        public void createRelease(boolean createRelease) {
+            this.createRelease = createRelease;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Should the release be updated, if it already exists on the repo
+         * @param updateRelease Update the release
+         */
+        public void updateRelease(boolean updateRelease) {
+            this.updateRelease = updateRelease;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Define the branch to target when creating tags and releases
+         * @param target The name of the branch to target
+         */
+        public void target(String target) {
+            this.target = target;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Override the Repo URL used for publishing
+         * @param repo The repo to publish to. Defaults to {@link ModPublisherGradleExtension#getGithubRepo() githubRepo}
+         */
+        public void repo(String repo) {
+            this.repo = repo;
+        }
     }
 }
 

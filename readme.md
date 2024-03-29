@@ -150,6 +150,20 @@ github {
 
     // Whether to update the GitHub release if it already exists. Defaults to true
     updateRelease = true
+
+    // Whether the release should be left as an unpublished draft.
+    //
+    // If enabled, newly created releases and existing drafts will not be published.
+    // Instead, a draft release is used.
+    //
+    // If disabled, the release will be published.
+    // This option does not allow converting a published release to a draft.
+    //
+    // Defaults to false
+    draft = false
+
+    // The commitish ref the tag should target (ignored when tag already exists)
+    target = "main"
 }
 
 // Modrinth Dependencies.
@@ -337,6 +351,20 @@ github {
 
     // Whether to update the GitHub release if it already exists. Defaults to true
     updateRelease = true
+
+    // Whether the release should be left as an unpublished draft.
+    //
+    // If enabled, newly created releases and existing drafts will not be published.
+    // Instead, a draft release is used.
+    //
+    // If disabled, the release will be published.
+    // This option does not allow converting a published release to a draft.
+    //
+    // Defaults to false
+    draft = false
+
+    // The commitish ref the tag should target (ignored when tag already exists)
+    target = "main"
 }
 
 // Modrinth Dependencies.

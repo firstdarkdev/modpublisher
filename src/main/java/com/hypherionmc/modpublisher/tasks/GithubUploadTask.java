@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -98,6 +99,9 @@ public class GithubUploadTask extends DefaultTask {
 
         UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
 
+        // We want to know if the existing release was a draft to avoid un-publishing releases
+        boolean wasDraft;
+
         // Existing release was not found, so we create a new one
         if (ghRelease == null) {
             if (!extension.getGithub().isCreateRelease()) {
@@ -127,13 +131,18 @@ public class GithubUploadTask extends DefaultTask {
 
             releaseBuilder.name(name);
 
+            // New releases should begin as drafts while we upload stuff to them
+            wasDraft = true;
+            releaseBuilder.draft(wasDraft);
+
             releaseBuilder.body(CommonUtil.resolveString(extension.getChangelog().get()));
-            releaseBuilder.draft(true);
-            releaseBuilder.commitish(ghRepository.getDefaultBranch());
+            Optional.ofNullable(extension.getGithub().getTarget()).ifPresent(releaseBuilder::commitish);
             ghRelease = releaseBuilder.create();
         } else if (!extension.getGithub().isUpdateRelease()) {
             project.getLogger().warn("Update GitHub Release is disabled and Github Release with tag {} already exists", tag);
             return;
+        } else {
+            wasDraft = ghRelease.isDraft();
         }
 
         if (ghRelease == null)
@@ -154,7 +163,9 @@ public class GithubUploadTask extends DefaultTask {
         // Actually publish the release if a brand new one was created
         GHReleaseUpdater releaseUpdater = ghRelease.update();
         releaseUpdater.prerelease(extension.getVersionType().get().equalsIgnoreCase("beta") || extension.getVersionType().get().equalsIgnoreCase("alpha"));
-        releaseUpdater.draft(false);
+        if (wasDraft) {
+            releaseUpdater.draft(extension.getGithub().isDraft());
+        }
         releaseUpdater.update();
 
         project.getLogger().lifecycle(

@@ -63,10 +63,10 @@ publisher {
     }
 
     github {
-        tag = "v${project.version}"
-        createTag = true
-        createRelease = true
-        updateRelease = true
+        tag("v${project.version}")
+        createTag(true)
+        createRelease(true)
+        updateRelease(true)
     }
 
     curseDepends {
