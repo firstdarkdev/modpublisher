@@ -1,3 +1,7 @@
+### Version 2.1.1
+
+* [FEAT] GitHub release `draft` and `target` options - [#11](https://github.com/firstdarkdev/modpublisher/pull/11) - MattSturgeon
+
 ### Version 2.1.0
 
 * [BUG] Fixed Modrinth Uploads failing when using ModLoaders enum - HypherionSA
