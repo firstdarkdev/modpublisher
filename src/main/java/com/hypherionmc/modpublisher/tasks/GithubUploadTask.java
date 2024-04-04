@@ -109,15 +109,11 @@ public class GithubUploadTask extends DefaultTask {
                 return;
             }
 
-            if (!extension.getGithub().isCreateTag()) {
-                // FIXME It'd be nice to get tag by name, but GHRepository doesn't expose an API to do that
-                // For now, just iterate thorough all tags on the repo...
-                for (GHTag ghTag : ghRepository.listTags()) {
-                    if (tag.equals(ghTag.getName())) {
-                        project.getLogger().warn("Create tag for GitHub Release is disabled and tag {} already exists", tag);
-                        return;
-                    }
-                }
+            // FIXME this check doesn't make sense when `github.draft` is true,
+            //       because draft releases don't create a tag anyway...
+            if (!extension.getGithub().isCreateTag() && !hasRef(ghRepository, "refs/tags/" + tag)) {
+                project.getLogger().warn("Create tag for GitHub Release is disabled and tag {} does not already exists", tag);
+                return;
             }
 
             GHReleaseBuilder releaseBuilder = new GHReleaseBuilder(ghRepository, tag);
@@ -175,5 +171,26 @@ public class GithubUploadTask extends DefaultTask {
                 ghRepository.getUrl().toString(),
                 ghRelease.getHtmlUrl().toString()
         );
+    }
+
+    /**
+     * Lookup whether the {@link GHRepository repo} has the specified {@code ref} or not.
+     *
+     * @param repo The GitHub repository to check
+     * @param ref The fully qualified ref, e.g. {@code "refs/heads/main"} or {@code "refs/tags/v1.0.0"}
+     * @return Whether the ref exists
+     * @throws IOException if something went wrong. E.g. a network error
+     */
+    private static boolean hasRef(GHRepository repo, String ref) throws IOException {
+        try {
+            // Lookup the tag, but ignore the result
+            // We only care whether a GHFileNotFoundException gets thrown
+            repo.getRef(ref);
+            return true;
+        } catch (GHFileNotFoundException e) {
+            return false;
+        } catch (IOException e) {
+            throw new IOException("Error checking whether \"" + ref + "\" exists on GitHub repo \"" + repo.getFullName() + "\"", e);
+        }
     }
 }
