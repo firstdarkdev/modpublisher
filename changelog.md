@@ -1,3 +1,7 @@
+### Version 2.1.3
+
+* [FIX] Support neoforge's `neoforge.mods.toml` file introduced in 20.5.0 - MattSturgeon
+
 ### Version 2.1.2
 
 * [FIX] GitHub release `createTag` option was broken - [#15](https://github.com/firstdarkdev/modpublisher/pull/15) - MattSturgeon

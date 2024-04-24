@@ -112,12 +112,13 @@ public class UploadPreChecks {
         Path quiltJson = system.getPath("quilt.mod.json");
         Path fabricJson = system.getPath("fabric.mod.json");
         Path forgeToml = system.getPath("META-INF/mods.toml");
+        Path neoforgeToml = system.getPath("META-INF/neoforge.mods.toml");
         Path forgeMc = system.getPath("mcmod.info");
 
         if (loaderVersions.contains("forge") || loaderVersions.contains("neoforge")) {
             // Check for either mods.toml or mcmod.info (for older version support)
-            if (!Files.exists(forgeToml) && !Files.exists(forgeMc))
-                throw new GradleException("File marked as forge/neoforge, but no mods.toml or mcmod.info file was found");
+            if (!Files.exists(neoforgeToml) && !Files.exists(forgeToml) && !Files.exists(forgeMc))
+                throw new GradleException("File marked as forge/neoforge, but no neoforge.mods.toml, mods.toml or mcmod.info file was found");
         }
 
         if (loaderVersions.contains("fabric")) {
