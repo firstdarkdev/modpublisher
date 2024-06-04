@@ -1,3 +1,11 @@
+### Version 2.1.5
+
+* [FEAT] Add support for "draft" uploads for Modrinth and CurseForge - HypherionSA
+
+### Version 2.1.4
+
+* [FEAT] Add override setting for GitHub display name - [#21](https://github.com/firstdarkdev/modpublisher/issues/21) - HypherionSA
+
 ### Version 2.1.3
 
 * [FIX] Support neoforge's `neoforge.mods.toml` file introduced in 20.5.0 - MattSturgeon

@@ -142,6 +142,10 @@ public class CurseUploadTask extends DefaultTask {
             artifact.displayName(extension.getProjectVersion().get());
         }
 
+        if (extension.getIsManualRelease().get()) {
+            artifact.manualRelease();
+        }
+
         if (extension.getCurseDepends() != null) {
             extension.getCurseDepends().getRequired().get().forEach(artifact::requirement);
             extension.getCurseDepends().getOptional().get().forEach(artifact::optional);

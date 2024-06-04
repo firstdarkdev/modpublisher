@@ -4,6 +4,7 @@ pluginManagement {
         maven {
             url = uri("https://maven.firstdarkdev.xyz/releases")
         }
+        maven("https://jitpack.io")
     }
 }
 

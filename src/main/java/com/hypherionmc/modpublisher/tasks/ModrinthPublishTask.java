@@ -16,6 +16,7 @@ import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import masecla.modrinth4j.client.agent.UserAgent;
 import masecla.modrinth4j.endpoints.version.CreateVersion;
 import masecla.modrinth4j.main.ModrinthAPI;
+import masecla.modrinth4j.model.project.ProjectStatus;
 import masecla.modrinth4j.model.version.ProjectVersion;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
@@ -151,6 +152,11 @@ public class ModrinthPublishTask extends DefaultTask {
                 uploadFiles.add(CommonUtil.resolveFile(project, file.getArtifact()));
             }
         }
+
+        if (extension.getIsManualRelease().get()) {
+            builder.requestedStatus(ProjectStatus.DRAFT);
+        }
+
         builder.files(uploadFiles);
 
         // Debug mode, so we do not upload the file

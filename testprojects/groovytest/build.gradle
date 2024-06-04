@@ -11,6 +11,7 @@ version = '1.0.18'
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -48,6 +49,7 @@ publisher {
     setDisableEmptyJarCheck(true)
     addAdditionalFile(jar)
     setJavaVersions(JavaVersion.VERSION_1_8, "Java 11", 17)
+    setIsManualRelease(true)
 
     addAdditionalFile {
         artifact jar

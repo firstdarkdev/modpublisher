@@ -93,6 +93,10 @@ publisher {
     // You can also use CurseEnvironment.BOTH, or CurseEnvironment.SERVER or CurseEnvironment.CLIENT
     setCurseEnvironment("both")
     
+    // Upload the release, but keep it "private" until you are ready
+    // Unreleased feature on CurseForge, working on Modrinth
+    setIsManualRelease(true)
+    
     // The file to be uploaded. This can be a file, task, or string.
     // setArtifact("build/libs/mymod.jar")
     // setArtifact(jar.getArchiveFile().get())
@@ -293,6 +297,10 @@ publisher {
     // You can also use CurseEnvironment.BOTH, or CurseEnvironment.SERVER or CurseEnvironment.CLIENT
     // setCurseEnvironment(CurseEnvironment.CLIENT)
     curseEnvironment.set("both")
+
+    // Upload the release, but keep it "private" until you are ready
+    // Unreleased feature on CurseForge, working on Modrinth
+    isManualRelease.set(true)
     
     // The file to be uploaded. This can be a file, task, or string.
     // setArtifact("build/libs/mymod.jar")

@@ -5,19 +5,24 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.gradle.plugin-publish' version '1.2.1'
     id 'com.diffplug.spotless' version '6.13.0'
+    id 'com.hypherionmc.modutils.orion' version '1.0.+'
 }
 apply plugin: 'maven-publish'
 
+orion.setup {
+    enableReleasesMaven = true
+
+    versioning {
+        var relType = project.properties["reltype"] ?: "${release_type}"
+        identifier("${relType}")
+        isUploadBuild = (relType == 'release')
+    }
+}
+
 group = 'com.hypherionmc.modutils'
-version = "${version_base}.${version_patch}"
-description = "Gradle plugin to Upload and Publish mods to Curseforge/Modrinth/Github"
+description = "Gradle plugin to Upload and Publish mods to CurseForge/Modrinth/Github"
 archivesBaseName = 'ModPublisher'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
-
-if (System.getenv('BUILD_NUMBER') != null) {
-    var build = (System.getenv('BUILD_NUMBER').toInteger() - 1)
-    version = "${version_base}.${build}"
-}
 
 configurations {
     shadeMe
@@ -26,16 +31,15 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven {
-        url "https://maven.firstdark.dev/releases"
-    }
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     implementation gradleApi()
 
     shadeMe "me.hypherionmc.modutils:CurseUpload4j:${curse4j}"
-    shadeMe "dev.masecla:Modrinth4J:${modrinth4j}"
+    shadeMe 'com.github.masecla22:Modrinth4J:-SNAPSHOT'
+    //shadeMe "dev.masecla:Modrinth4J:${modrinth4j}"
     shadeMe "org.kohsuke:github-api:${github}"
     shadeMe "org.apache.maven:maven-artifact:${mavenart}"
 
@@ -98,12 +102,6 @@ spotless {
 
 publishing {
     repositories {
-        maven {
-            url System.getenv('MAVEN_URL')
-            credentials {
-                username System.getenv('MAVEN_USER')
-                password System.getenv('MAVEN_PASS')
-            }
-        }
+        maven orion.getPublishingMaven()
     }
 }

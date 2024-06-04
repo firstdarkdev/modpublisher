@@ -99,6 +99,8 @@ public class ModPublisherGradleExtension {
 
     @Getter private final ListProperty<JavaVersion> javaVersions;
 
+    @Getter private final Property<Boolean> isManualRelease;
+
     private final Project project;
 
     public ModPublisherGradleExtension(Project project) {
@@ -117,6 +119,7 @@ public class ModPublisherGradleExtension {
         this.curseEnvironment = project.getObjects().property(String.class).convention("both");
         this.artifacts = new HashMap<>();
         this.artifact = project.getObjects().property(Object.class);
+        this.isManualRelease = project.getObjects().property(Boolean.class).convention(false);
 
         // GitHub config
         this.github = new GithubConfig();

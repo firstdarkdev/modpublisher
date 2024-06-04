@@ -12,6 +12,7 @@ version = "1.0.24"
 
 repositories {
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -55,6 +56,7 @@ publisher {
     setPlatformArtifact("modrinth", dummyTask)
     useModrinthStaging.set(false)
     addAdditionalFile(tasks.jar)
+    isManualRelease.set(true)
 
     addAdditionalFile {
         artifact(tasks.jar)

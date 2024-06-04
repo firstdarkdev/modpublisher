@@ -4,6 +4,7 @@ pluginManagement {
         maven {
             url "https://maven.firstdark.dev/releases"
         }
+        maven { url "https://jitpack.io" }
     }
 }
 
