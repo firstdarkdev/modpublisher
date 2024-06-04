@@ -23,6 +23,13 @@ pluginManagement {
         maven {
             url "https://maven.firstdark.dev/releases"
         }
+        
+        /*
+        For unreleased versions
+        maven {
+            url "https://maven.firstdark.dev/snapshots"
+        }
+         */
     }
 }
 ```
@@ -30,6 +37,7 @@ pluginManagement {
 Next, in your `build.gradle` add:
 
 ![badge](https://maven.firstdarkdev.xyz/api/badge/latest/releases/com/hypherionmc/modutils/modpublisher?color=40c14a&name=modpublisher)
+![badge](https://maven.firstdarkdev.xyz/api/badge/latest/snapshots/com/hypherionmc/modutils/modpublisher?color=40c14a&name=modpublisher-snapshot)
 
 ```groovy
 plugins {
@@ -223,6 +231,12 @@ pluginManagement {
         maven {
             url = uri("https://maven.firstdark.dev/releases")
         }
+        
+        /*
+        For Unreleased Versions
+        maven {
+            url = uri("https://maven.firstdark.dev/snapshots")
+        }*/
     }
 }
 ```
@@ -230,6 +244,8 @@ pluginManagement {
 Next, in your `build.gradle.kts` add:
 
 ![badge](https://maven.firstdarkdev.xyz/api/badge/latest/releases/com/hypherionmc/modutils/modpublisher?color=40c14a&name=modpublisher)
+![badge](https://maven.firstdarkdev.xyz/api/badge/latest/snapshots/com/hypherionmc/modutils/modpublisher?color=40c14a&name=modpublisher-snapshot)
+
 
 ```kotlin
 plugins {
