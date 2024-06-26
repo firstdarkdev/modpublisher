@@ -42,6 +42,7 @@ dependencies {
     //shadeMe "dev.masecla:Modrinth4J:${modrinth4j}"
     shadeMe "org.kohsuke:github-api:${github}"
     shadeMe "org.apache.maven:maven-artifact:${mavenart}"
+    shadeMe "com.hypherionmc.nightbloom:nightbloom4j:${nightbloom}"
 
     shadeMe "org.ow2.asm:asm:${asm}"
     shadeMe "org.ow2.asm:asm-tree:${asm}"

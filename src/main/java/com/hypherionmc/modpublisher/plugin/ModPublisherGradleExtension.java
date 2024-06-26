@@ -42,6 +42,9 @@ public class ModPublisherGradleExtension {
     // Modrinth Project ID (NOT SLUG)
     @Getter private final Property<String> modrinthID;
 
+    // Nightbloom Project ID or slug
+    @Getter private final Property<String> nightbloomID;
+
     // GitHub Repo. username/repo or URL
     @Getter private final Property<String> githubRepo;
 
@@ -85,6 +88,9 @@ public class ModPublisherGradleExtension {
     // Modrinth Dependencies
     @Getter private final Dependencies modrinthDepends;
 
+    // Nightbloom Dependencies. Currently only allows 1
+    @Getter private final Property<Integer> nightbloomDepends;
+
     // Disable Jar Scanning
     @Getter private final Property<Boolean> disableMalwareScanner;
 
@@ -108,6 +114,7 @@ public class ModPublisherGradleExtension {
         this.debug = project.getObjects().property(Boolean.class).convention(false);
         this.curseID = project.getObjects().property(String.class);
         this.modrinthID = project.getObjects().property(String.class);
+        this.nightbloomID = project.getObjects().property(String.class);
         this.githubRepo = project.getObjects().property(String.class);
         this.versionType = project.getObjects().property(String.class).convention("release");
         this.changelog = project.getObjects().property(Object.class);
@@ -138,6 +145,9 @@ public class ModPublisherGradleExtension {
         ListProperty<String> modrinthOptional = project.getObjects().listProperty(String.class).empty();
         ListProperty<String> modrinthEmbedded = project.getObjects().listProperty(String.class).empty();
         this.modrinthDepends = new Dependencies(modrinthRequired, modrinthOptional, modrinthIncompatible, modrinthEmbedded);
+
+        // Nightbloom Dependencies
+        this.nightbloomDepends = project.getObjects().property(Integer.class);
 
         this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(false);
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
@@ -334,6 +344,7 @@ public class ModPublisherGradleExtension {
         private String curseforge = "";
         private String modrinth = "";
         private String github = "";
+        private String nightbloom = "";
 
         /**
          * Mostly for Kotlin support
@@ -360,6 +371,15 @@ public class ModPublisherGradleExtension {
          */
         public void github(String github) {
             this.github = github;
+        }
+
+        /**
+         * Mostly for Kotlin support
+         * Set the Nightbloom API key
+         * @param nightbloom The API Key
+         */
+        public void nightbloom(String nightbloom) {
+            this.nightbloom = nightbloom;
         }
     }
 

@@ -12,14 +12,11 @@ import com.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
-import org.gradle.api.provider.Property;
 
 import java.io.File;
 import java.nio.file.*;
 import java.util.List;
-import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class UploadPreChecks {
 
@@ -71,6 +68,25 @@ public class UploadPreChecks {
         if (extension.getApiKeys() != null && !extension.getApiKeys().getModrinth().isEmpty()) {
             if (!extension.getModrinthID().isPresent() || extension.getModrinthID().get().isEmpty()) {
                 throw new Exception("Found Modrinth API token, but modrinthID is not defined");
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean canUploadNightbloom(Project project, ModPublisherGradleExtension extension) throws Exception {
+        if (extension == null)
+            return false;
+
+        if (StringUtils.isBlank(extension.getProjectVersion().getOrNull())) {
+            throw new Exception("Version is not defined. This is REQUIRED by NightBloom");
+        }
+
+        // Check that both the Modrinth API key and Project ID is defined
+        if (extension.getApiKeys() != null && !extension.getApiKeys().getNightbloom().isEmpty()) {
+            if (!extension.getNightbloomID().isPresent() || extension.getNightbloomID().get().isEmpty()) {
+                throw new Exception("Found NightBloom API token, but nightbloomID is not defined");
             } else {
                 return true;
             }

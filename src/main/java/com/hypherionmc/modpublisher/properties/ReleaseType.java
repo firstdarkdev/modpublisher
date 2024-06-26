@@ -13,5 +13,7 @@ package com.hypherionmc.modpublisher.properties;
 public enum ReleaseType {
     ALPHA,
     BETA,
-    RELEASE
+    RELEASE,
+    // Only Valid on NightBloom
+    SNAPSHOT
 }

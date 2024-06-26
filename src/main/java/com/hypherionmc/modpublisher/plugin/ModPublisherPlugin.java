@@ -7,10 +7,7 @@
 package com.hypherionmc.modpublisher.plugin;
 
 import com.hypherionmc.modpublisher.properties.Platform;
-import com.hypherionmc.modpublisher.tasks.CurseUploadTask;
-import com.hypherionmc.modpublisher.tasks.GithubUploadTask;
-import com.hypherionmc.modpublisher.tasks.ModrinthPublishTask;
-import com.hypherionmc.modpublisher.tasks.UploadModTask;
+import com.hypherionmc.modpublisher.tasks.*;
 import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import org.gradle.api.Plugin;
@@ -53,6 +50,10 @@ public class ModPublisherPlugin implements Plugin<Project> {
         modrinthUploadTask.setDescription("Upload your mod to Modrinth");
         modrinthUploadTask.setGroup(TASK_GROUP);
 
+        final Task nightbloomUploadTask = project.getTasks().create(NIGHTBLOOM_TASK, NightBloomUploadTask.class, project, extension);
+        nightbloomUploadTask.setDescription("Upload your mod to NightBloom");
+        nightbloomUploadTask.setGroup(TASK_GROUP);
+
         project.afterEvaluate(c -> {
             try {
                 if (UploadPreChecks.canUploadCurse(project, extension)) {
@@ -75,6 +76,14 @@ public class ModPublisherPlugin implements Plugin<Project> {
                     Object artifactObject = CommonUtil.getPlatformArtifact(Platform.GITHUB, extension);
                     resolveInputTask(project, artifactObject, gitHubUploadTask);
                     uploadTask.dependsOn(gitHubUploadTask);
+                }
+            } catch (Exception ignored) {}
+
+            try {
+                if (UploadPreChecks.canUploadNightbloom(project, extension)) {
+                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.NIGHTBLOOM, extension);
+                    resolveInputTask(project, artifactObject, nightbloomUploadTask);
+                    uploadTask.dependsOn(nightbloomUploadTask);
                 }
             } catch (Exception ignored) {}
         });

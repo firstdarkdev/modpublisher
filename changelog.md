@@ -1,6 +1,7 @@
 ### Version 2.1.5
 
 * [FEAT] Add support for "draft" uploads for Modrinth and CurseForge - HypherionSA
+* [FEAT] Add support for our NightBloom download platform
 
 ### Version 2.1.4
 

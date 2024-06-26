@@ -13,5 +13,6 @@ package com.hypherionmc.modpublisher.properties;
 public enum Platform {
     CURSEFORGE,
     MODRINTH,
-    GITHUB
+    GITHUB,
+    NIGHTBLOOM
 }

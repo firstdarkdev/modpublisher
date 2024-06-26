@@ -6,7 +6,6 @@
  */
 package com.hypherionmc.modpublisher.tasks;
 
-import com.github.javaparser.StringProvider;
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.util.CommonUtil;
@@ -16,7 +15,6 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Project;
-import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskAction;
 import org.kohsuke.github.*;

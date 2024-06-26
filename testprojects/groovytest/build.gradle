@@ -32,12 +32,14 @@ publisher {
     apiKeys {
         modrinth System.getenv("MODRINTH_TOKEN")
         curseforge System.getenv("CURSE_TOKEN")
+        nightbloom("1253")
     }
 
-    setDebug(true)
+    setDebug(false)
     setCurseID("1234")
     setModrinthID("dsgfhs79789")
     setVersionType("beta")
+    setNightbloomID("craterlib")
     setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/sdlink/combo.md")
     setProjectVersion("1.20.2-${project.version}")
     setDisplayName("[1.20.x] Simple Discord Link - ${project.version}")
