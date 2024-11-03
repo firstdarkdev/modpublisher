@@ -1,7 +1,14 @@
+### Version 2.1.7
+
+* [Fix] - Find draft GitHub releases using tag [#26](https://github.com/firstdarkdev/modpublisher/pull/26)
+
+### Version 2.1.6
+
+* [FEAT] Add support for our NightBloom download platform
+
 ### Version 2.1.5
 
 * [FEAT] Add support for "draft" uploads for Modrinth and CurseForge - HypherionSA
-* [FEAT] Add support for our NightBloom download platform
 
 ### Version 2.1.4
 

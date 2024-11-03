@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -95,7 +96,7 @@ public class GithubUploadTask extends DefaultTask {
 
         // Try to find an existing release.
         // If one is found, the file will be added onto it.
-        GHRelease ghRelease = ghRepository.getReleaseByTagName(tag);
+        GHRelease ghRelease = getRelease(ghRepository, tag);
 
         UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
 
@@ -173,6 +174,24 @@ public class GithubUploadTask extends DefaultTask {
                 ghRepository.getUrl().toString(),
                 ghRelease.getHtmlUrl().toString()
         );
+    }
+
+    private static GHRelease getRelease(GHRepository repo, String tag) throws IOException {
+        // First, attempt to get the tag using the releases/tags/<tag> endpoint
+        GHRelease attempt1 = repo.getReleaseByTagName(tag);
+        if (attempt1 != null) {
+            return attempt1;
+        }
+
+        // For draft releases we need to do some additional work...
+        // Scan all releases for one with a matching tag name
+        for (GHRelease release : repo.listReleases()) {
+            if (Objects.equals(tag, release.getTagName())) {
+                return release;
+            }
+        }
+
+        return null;
     }
 
     /**
