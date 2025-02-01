@@ -8,6 +8,8 @@ package com.hypherionmc.modpublisher.tasks;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.hypherionmc.modpublisher.Constants;
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import com.hypherionmc.modpublisher.properties.Platform;
@@ -162,7 +164,15 @@ public class ModrinthPublishTask extends DefaultTask {
         // Debug mode, so we do not upload the file
         if (extension.getDebug().get()) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            project.getLogger().lifecycle("Full data to be sent for upload: {}", gson.toJson(builder.build()));
+            JsonObject object = new JsonObject();
+            object.add("metadata", gson.toJsonTree(builder.build()));
+            object.addProperty("file", uploadFile.getName());
+
+            JsonArray additional = new JsonArray();
+            uploadFiles.forEach(f -> additional.add(f.getName()));
+            object.add("additional", additional);
+
+            project.getLogger().lifecycle("Full data to be sent for upload: {}", gson.toJson(object));
             return;
         }
 
