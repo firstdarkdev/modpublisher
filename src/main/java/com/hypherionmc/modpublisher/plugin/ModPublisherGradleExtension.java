@@ -149,7 +149,7 @@ public class ModPublisherGradleExtension {
         // Nightbloom Dependencies
         this.nightbloomDepends = project.getObjects().property(Integer.class);
 
-        this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(false);
+        this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(true);
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
         this.additionalFiles = project.getObjects().listProperty(AdditionalFile.class).empty();

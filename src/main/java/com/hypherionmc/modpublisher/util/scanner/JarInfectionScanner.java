@@ -24,6 +24,7 @@ import static org.objectweb.asm.Opcodes.*;
  * Contains code copied from https://github.com/MCRcortex/nekodetector/blob/master/src/main/java/me/cortex/jarscanner/Detector.java
  * with permission
  */
+@Deprecated
 public class JarInfectionScanner {
 
     public static void scan(Project project, Object file) throws Exception {
