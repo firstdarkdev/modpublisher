@@ -102,6 +102,10 @@ public class CommonUtil {
         return obj.toString();
     }
 
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
+
     /**
      * Cleanup GitHub URLS for use with hub4j
      * @param url The URL as passed to the config

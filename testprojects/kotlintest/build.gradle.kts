@@ -85,4 +85,11 @@ publisher {
         incompatible("breaks-with")
         embedded("rift")
     }
+
+    proxy {
+        httpHost("")
+        httpPort(12)
+        httpsHost("")
+        httpsPort(13)
+    }
 }

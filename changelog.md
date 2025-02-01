@@ -1,6 +1,9 @@
 ### Version 2.1.7
 
 * [Fix] - Find draft GitHub releases using tag [#26](https://github.com/firstdarkdev/modpublisher/pull/26)
+* [Bug] - Modrinth Files are not listed in Debug output - [#23](https://github.com/firstdarkdev/modpublisher/issues/23)
+* [Change] - Deprecate Fractureiser Scanner and disable it by default
+* [Feat] - Experimental Support for Proxy Configuration - [#24](https://github.com/firstdarkdev/modpublisher/issues/24)
 
 ### Version 2.1.6
 

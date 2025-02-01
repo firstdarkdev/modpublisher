@@ -75,4 +75,11 @@ publisher {
     curseDepends {
         required "fabric-api", "craterlib"
     }
+
+    proxy {
+        httpHost("")
+        httpPort(12)
+        httpsHost("")
+        httpsPort(13)
+    }
 }

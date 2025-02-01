@@ -19,6 +19,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 import javax.annotation.Nonnull;
 
 import static com.hypherionmc.modpublisher.Constants.*;
+import static com.hypherionmc.modpublisher.util.CommonUtil.isNullOrEmpty;
 
 /**
  * @author HypherionSA
@@ -55,6 +56,14 @@ public class ModPublisherPlugin implements Plugin<Project> {
         nightbloomUploadTask.setGroup(TASK_GROUP);
 
         project.afterEvaluate(c -> {
+            if (!isNullOrEmpty(extension.getProxyConfig().getHttpHost()) && !isNullOrEmpty(extension.getProxyConfig().getHttpsHost())) {
+                System.setProperty("http.proxyHost", extension.getProxyConfig().getHttpHost());
+                System.setProperty("http.proxyPort", String.valueOf(extension.getProxyConfig().getHttpPort()));
+                System.setProperty("https.proxyHost", extension.getProxyConfig().getHttpsHost());
+                System.setProperty("https.proxyPort", String.valueOf(extension.getProxyConfig().getHttpsPort()));
+                project.getLogger().lifecycle("Added Proxy Information");
+            }
+
             try {
                 if (UploadPreChecks.canUploadCurse(project, extension)) {
                     Object artifactObject = CommonUtil.getPlatformArtifact(Platform.CURSEFORGE, extension);

@@ -107,6 +107,9 @@ public class ModPublisherGradleExtension {
 
     @Getter private final Property<Boolean> isManualRelease;
 
+    // Proxy Config
+    @Getter private final ProxyConfig proxyConfig;
+
     private final Project project;
 
     public ModPublisherGradleExtension(Project project) {
@@ -153,6 +156,8 @@ public class ModPublisherGradleExtension {
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
         this.additionalFiles = project.getObjects().listProperty(AdditionalFile.class).empty();
+
+        this.proxyConfig = new ProxyConfig();
     }
 
     /**
@@ -193,6 +198,14 @@ public class ModPublisherGradleExtension {
      */
     public void github(Action<GithubConfig> action) {
         action.execute(github);
+    }
+
+    /**
+     * Helper method to create the Proxy extension with DSL
+     * @param action The configured Proxy DSL to apply
+     */
+    public void proxy(Action<ProxyConfig> action) {
+        action.execute(proxyConfig);
     }
 
     /**
@@ -478,6 +491,37 @@ public class ModPublisherGradleExtension {
          */
         public void embedded(String... deps) {
             embedded.addAll(deps);
+        }
+    }
+
+    /**
+     * Helper class to configure a proxy for the plugin to use
+     */
+    @Getter
+    public static class ProxyConfig {
+        private String httpHost;
+        private int httpPort;
+        private String httpsHost;
+        private int httpsPort;
+
+        public void configure(Action<ProxyConfig> action) {
+            action.execute(this);
+        }
+
+        public void httpHost(String httpHost) {
+            this.httpHost = httpHost;
+        }
+
+        public void httpPort(int httpPort) {
+            this.httpPort = httpPort;
+        }
+
+        public void httpsHost(String httpsHost) {
+            this.httpsHost = httpsHost;
+        }
+
+        public void httpsPort(int httpsPort) {
+            this.httpsPort = httpsPort;
         }
     }
 
