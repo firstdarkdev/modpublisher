@@ -56,11 +56,16 @@ public class ModPublisherPlugin implements Plugin<Project> {
         nightbloomUploadTask.setGroup(TASK_GROUP);
 
         project.afterEvaluate(c -> {
-            if (!isNullOrEmpty(extension.getProxyConfig().getHttpHost()) && !isNullOrEmpty(extension.getProxyConfig().getHttpsHost())) {
-                System.setProperty("http.proxyHost", extension.getProxyConfig().getHttpHost());
-                System.setProperty("http.proxyPort", String.valueOf(extension.getProxyConfig().getHttpPort()));
-                System.setProperty("https.proxyHost", extension.getProxyConfig().getHttpsHost());
-                System.setProperty("https.proxyPort", String.valueOf(extension.getProxyConfig().getHttpsPort()));
+            if (!isNullOrEmpty(extension.getProxyConfig().getHttpHost()) || !isNullOrEmpty(extension.getProxyConfig().getHttpsHost())) {
+                if (!isNullOrEmpty(extension.getProxyConfig().getHttpHost())) {
+                    System.setProperty("http.proxyHost", extension.getProxyConfig().getHttpHost());
+                    System.setProperty("http.proxyPort", String.valueOf(extension.getProxyConfig().getHttpPort()));
+                }
+
+                if (!isNullOrEmpty(extension.getProxyConfig().getHttpsHost())) {
+                    System.setProperty("https.proxyHost", extension.getProxyConfig().getHttpsHost());
+                    System.setProperty("https.proxyPort", String.valueOf(extension.getProxyConfig().getHttpsPort()));
+                }
                 project.getLogger().lifecycle("Added Proxy Information");
             }
 
