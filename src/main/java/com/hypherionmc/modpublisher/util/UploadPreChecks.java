@@ -8,7 +8,6 @@ package com.hypherionmc.modpublisher.util;
 
 import com.hypherionmc.modpublisher.plugin.ModPublisherGradleExtension;
 import com.hypherionmc.modpublisher.properties.Platform;
-import com.hypherionmc.modpublisher.util.scanner.JarInfectionScanner;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
@@ -34,10 +33,6 @@ public class UploadPreChecks {
 
         if (!extension.getGameVersions().isPresent() || extension.getGameVersions().get().isEmpty()) {
             throw new Exception("gameVersions is not defined. This is required");
-        }
-
-        if (!extension.getDisableMalwareScanner().get()) {
-            JarInfectionScanner.scan(project, artifactObject);
         }
     }
 

@@ -92,6 +92,7 @@ public class ModPublisherGradleExtension {
     @Getter private final Property<Integer> nightbloomDepends;
 
     // Disable Jar Scanning
+    @Deprecated
     @Getter private final Property<Boolean> disableMalwareScanner;
 
     // Disable Empty Jar Checker
@@ -151,7 +152,6 @@ public class ModPublisherGradleExtension {
 
         // Nightbloom Dependencies
         this.nightbloomDepends = project.getObjects().property(Integer.class);
-
         this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(true);
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);

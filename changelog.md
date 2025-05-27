@@ -2,9 +2,9 @@
 
 * [Fix] - Find draft GitHub releases using tag [#26](https://github.com/firstdarkdev/modpublisher/pull/26)
 * [Bug] - Modrinth Files are not listed in Debug output - [#23](https://github.com/firstdarkdev/modpublisher/issues/23)
-* [Change] - Deprecate Fractureiser Scanner and disable it by default
 * [Feat] - Experimental Support for Proxy Configuration - [#24](https://github.com/firstdarkdev/modpublisher/issues/24)
 * [Bug] - Fix CurseForge Requests failing when content encoding header is null - [#28](https://github.com/firstdarkdev/modpublisher/issues/28)
+* [Bug] - Remove Fractureizer Scanner cause ASM keeps causing issues with other plugins - [#29](https://github.com/firstdarkdev/modpublisher/issues/29)
 
 ### Version 2.1.6
 

@@ -44,9 +44,6 @@ dependencies {
     shadeMe "org.apache.maven:maven-artifact:${mavenart}"
     shadeMe "com.hypherionmc.nightbloom:nightbloom4j:${nightbloom}"
 
-    shadeMe "org.ow2.asm:asm:${asm}"
-    shadeMe "org.ow2.asm:asm-tree:${asm}"
-
     compileOnly "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
 
@@ -96,7 +93,7 @@ jar {
 
 spotless {
     java {
-        targetExclude("src/test/**", "src/main/java/me/hypherionmc/modpublisher/util/scanner/**")
+        targetExclude("src/test/**")
         licenseHeaderFile(rootProject.file("HEADER")).yearSeparator("-")
     }
 }
