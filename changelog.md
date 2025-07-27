@@ -1,6 +1,7 @@
 ### Version 2.1.8
 
 * [Bug] - Fix commit `3562a62` that was wiped out by release 2.1.7
+* [Chore] - Update dependencies
 
 ### Version 2.1.7
 

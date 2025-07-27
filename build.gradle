@@ -39,7 +39,6 @@ dependencies {
 
     shadeMe "me.hypherionmc.modutils:CurseUpload4j:${curse4j}"
     shadeMe 'com.github.masecla22:Modrinth4J:-SNAPSHOT'
-    //shadeMe "dev.masecla:Modrinth4J:${modrinth4j}"
     shadeMe "org.kohsuke:github-api:${github}"
     shadeMe "org.apache.maven:maven-artifact:${mavenart}"
     shadeMe "com.hypherionmc.nightbloom:nightbloom4j:${nightbloom}"
