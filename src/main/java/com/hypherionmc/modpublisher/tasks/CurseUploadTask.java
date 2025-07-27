@@ -100,14 +100,20 @@ public class CurseUploadTask extends DefaultTask {
         }
 
         for (String modLoader : extension.getLoaders().get()) {
-
             // Replace `modloader` with `risugamis-modloader`
             if (modLoader.equalsIgnoreCase("modloader")) {
                 artifact.modLoader("risugami's modloader");
-            } else {
-                // No changes needed, pass the modloader along
-                artifact.modLoader(modLoader);
+                continue;
             }
+
+            // Replace `flint` with `flint loader`
+            if (modLoader.equalsIgnoreCase("flint")) {
+                artifact.modLoader("flint loader");
+                continue;
+            }
+
+            // No changes needed, pass the modloader along
+            artifact.modLoader(modLoader);
         }
         // Back to our regularly scheduled code
 

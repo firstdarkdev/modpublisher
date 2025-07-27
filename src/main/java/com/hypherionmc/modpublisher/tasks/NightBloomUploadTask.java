@@ -14,6 +14,7 @@ import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import com.hypherionmc.nightbloom.NightBloom4J;
 import com.hypherionmc.nightbloom.client.agent.UserAgent;
+import com.hypherionmc.nightbloom.model.DependencyType;
 import com.hypherionmc.nightbloom.model.ProjectMeta;
 import com.hypherionmc.nightbloom.model.StandardResponse;
 import org.gradle.api.DefaultTask;
@@ -73,9 +74,6 @@ public class NightBloomUploadTask extends DefaultTask {
         metab.type(extension.getVersionType().get().toLowerCase());
         metab.version(extension.getProjectVersion().get());
 
-        if (extension.getNightbloomDepends().isPresent())
-            metab.dependsOn(extension.getNightbloomDepends().get());
-
         if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
             metab.displayName(extension.getDisplayName().get());
         } else {
@@ -92,12 +90,27 @@ public class NightBloomUploadTask extends DefaultTask {
         ProjectMeta meta = metab.build();
         finalGameVersions.forEach(meta::addMinecraft);
 
+        if (extension.getNightbloomDepends() != null) {
+            extension.getNightbloomDepends().getRequired().get().forEach(rd -> meta.addDependsOn(rd, DependencyType.REQUIRED));
+            extension.getNightbloomDepends().getOptional().get().forEach(od -> meta.addDependsOn(od, DependencyType.OPTIONAL));
+            extension.getNightbloomDepends().getIncompatible().get().forEach(id -> meta.addDependsOn(id, DependencyType.BREAKS));
+            extension.getNightbloomDepends().getEmbedded().get().forEach(ed -> meta.addDependsOn(ed, DependencyType.TOOL));
+        }
+
         List<String> finalLoaders = new ArrayList<>();
         for (String loader : extension.getLoaders().get()) {
             if (loader.equalsIgnoreCase("risugami's modloader")) {
-                if (!finalLoaders.contains("modloader"))
+                if (!finalLoaders.contains("modloader")) {
                     finalLoaders.add("modloader");
-                continue;
+                    continue;
+                }
+            }
+
+            if (loader.equalsIgnoreCase("flint loader")) {
+                if (!finalLoaders.contains("flint")) {
+                    finalLoaders.add("flint");
+                    continue;
+                }
             }
 
             finalLoaders.add(loader.toLowerCase());

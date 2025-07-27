@@ -88,8 +88,8 @@ public class ModPublisherGradleExtension {
     // Modrinth Dependencies
     @Getter private final Dependencies modrinthDepends;
 
-    // Nightbloom Dependencies. Currently only allows 1
-    @Getter private final Property<Integer> nightbloomDepends;
+    // Nightbloom Dependencies
+    @Getter private final Dependencies nightbloomDepends;
 
     // Disable Jar Scanning
     @Deprecated
@@ -150,8 +150,14 @@ public class ModPublisherGradleExtension {
         ListProperty<String> modrinthEmbedded = project.getObjects().listProperty(String.class).empty();
         this.modrinthDepends = new Dependencies(modrinthRequired, modrinthOptional, modrinthIncompatible, modrinthEmbedded);
 
-        // Nightbloom Dependencies
-        this.nightbloomDepends = project.getObjects().property(Integer.class);
+        // Control Nightbloom Dependencies
+        ListProperty<String> nightbloomRequired = project.getObjects().listProperty(String.class).empty();
+        ListProperty<String> nightbloomIncompatible = project.getObjects().listProperty(String.class).empty();
+        ListProperty<String> nightbloomOptional = project.getObjects().listProperty(String.class).empty();
+        ListProperty<String> nightbloomEmbedded = project.getObjects().listProperty(String.class).empty();
+        this.nightbloomDepends = new Dependencies(nightbloomRequired, nightbloomOptional, nightbloomIncompatible, nightbloomEmbedded);
+
+
         this.disableMalwareScanner = project.getObjects().property(Boolean.class).convention(true);
         this.disableEmptyJarCheck = project.getObjects().property(Boolean.class).convention(false);
         this.useModrinthStaging = project.getObjects().property(Boolean.class).convention(false);
@@ -222,6 +228,14 @@ public class ModPublisherGradleExtension {
      */
     public void modrinthDepends(Action<Dependencies> action) {
         action.execute(modrinthDepends);
+    }
+
+    /**
+     * Helper method to create nightbloomDepends with DSL
+     * @param action The configured nightbloomDepends DSL to apply
+     */
+    public void nightbloomDepends(Action<Dependencies> action) {
+        action.execute(nightbloomDepends);
     }
 
     /**

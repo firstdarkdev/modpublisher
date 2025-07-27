@@ -1,3 +1,7 @@
+### Version 2.1.8
+
+* [Bug] - Fix commit `3562a62` that was wiped out by release 2.1.7
+
 ### Version 2.1.7
 
 * [Fix] - Find draft GitHub releases using tag [#26](https://github.com/firstdarkdev/modpublisher/pull/26)
@@ -8,7 +12,8 @@
 
 ### Version 2.1.6
 
-* [FEAT] Add support for our NightBloom download platform
+* [FEAT] Support dependencies for NightBloom
+* [DEV] More modloader remappings for the different platforms
 
 ### Version 2.1.5
 
