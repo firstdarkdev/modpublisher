@@ -135,7 +135,7 @@ public class NightBloomUploadTask extends DefaultTask {
             return;
         }
 
-        Matcher matcher = Pattern.compile("\\bID\\s*(\\d+)\\b").matcher(r.getMessage());
+        Matcher matcher = Pattern.compile("\\bID\\s*([a-zA-Z0-9]+)\\b").matcher(r.getMessage());
         matcher.find();
 
         project.getLogger().lifecycle(
