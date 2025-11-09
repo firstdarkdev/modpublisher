@@ -53,7 +53,12 @@ public class GithubUploadTask extends DefaultTask {
      */
     @TaskAction
     public void upload() throws Exception {
-        project.getLogger().lifecycle("Uploading to GitHub");
+        if (extension.getSourceSet() == null) {
+            project.getLogger().lifecycle("Uploading to GitHub");
+        } else {
+            project.getLogger().lifecycle("Uploading {} to GitHub", extension.getProjectName());
+        }
+
         UploadPreChecks.checkRequiredValues(project, Platform.GITHUB, extension);
         boolean canUpload = UploadPreChecks.canUploadGitHub(project, extension);
         if (!canUpload)

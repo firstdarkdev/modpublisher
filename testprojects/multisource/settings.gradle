@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url "https://maven.firstdark.dev/releases"
+        }
+        maven { url "https://jitpack.io" }
+    }
+}
+
+includeBuild("../../")
+rootProject.name = "multisource"

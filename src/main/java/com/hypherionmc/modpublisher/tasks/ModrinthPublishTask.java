@@ -55,7 +55,12 @@ public class ModrinthPublishTask extends DefaultTask {
      */
     @TaskAction
     public void upload() throws Exception {
-        project.getLogger().lifecycle("Uploading to Modrinth");
+        if (extension.getSourceSet() == null) {
+            project.getLogger().lifecycle("Uploading to Modrinth");
+        } else {
+            project.getLogger().lifecycle("Uploading {} to Modrinth", extension.getProjectName());
+        }
+
         UploadPreChecks.checkRequiredValues(project, Platform.MODRINTH, extension);
         boolean canUpload = UploadPreChecks.canUploadModrinth(project, extension);
         if (!canUpload)

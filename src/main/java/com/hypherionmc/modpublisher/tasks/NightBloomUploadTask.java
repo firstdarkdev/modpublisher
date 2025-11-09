@@ -45,7 +45,12 @@ public class NightBloomUploadTask extends DefaultTask {
      */
     @TaskAction
     public void upload() throws Exception {
-        project.getLogger().lifecycle("Uploading to NightBloom");
+        if (extension.getSourceSet() == null) {
+            project.getLogger().lifecycle("Uploading to NightBloom");
+        } else {
+            project.getLogger().lifecycle("Uploading {} to NightBloom", extension.getProjectName());
+        }
+
         UploadPreChecks.checkRequiredValues(project, Platform.NIGHTBLOOM, extension);
         boolean canUpload = UploadPreChecks.canUploadNightbloom(project, extension);
         if (!canUpload)

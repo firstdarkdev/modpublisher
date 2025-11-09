@@ -50,7 +50,12 @@ public class CurseUploadTask extends DefaultTask {
      */
     @TaskAction
     public void upload() throws Exception {
-        project.getLogger().lifecycle("Uploading to Curseforge");
+        if (extension.getSourceSet() == null) {
+            project.getLogger().lifecycle("Uploading to CurseForge");
+        } else {
+            project.getLogger().lifecycle("Uploading {} to CurseForge", extension.getProjectName());
+        }
+
         UploadPreChecks.checkRequiredValues(project, Platform.CURSEFORGE, extension);
         boolean canUpload = UploadPreChecks.canUploadCurse(project, extension);
         if (!canUpload)

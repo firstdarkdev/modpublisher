@@ -11,6 +11,7 @@ import com.hypherionmc.modpublisher.properties.ModLoader;
 import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.properties.ReleaseType;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
@@ -18,6 +19,7 @@ import org.gradle.api.JavaVersion;
 import org.gradle.api.Project;
 import org.gradle.api.provider.ListProperty;
 import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.SourceSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +31,13 @@ import java.util.HashMap;
  * to configure the plugin
  */
 public class ModPublisherGradleExtension {
+
+    @Getter
+    private SourceSet sourceSet = null;
+
+    @Setter
+    @Getter
+    private String projectName = "";
 
     // API Keys for Modrinth/Curseforge/GitHub. Used for publishing
     @Getter private final ApiKeys apiKeys = new ApiKeys();
@@ -125,8 +134,8 @@ public class ModPublisherGradleExtension {
         this.version = project.getObjects().property(String.class);
         this.projectVersion = project.getObjects().property(String.class).convention(this.version);
         this.displayName = project.getObjects().property(String.class);
-        this.gameVersions = project.getObjects().listProperty(String.class).empty();
-        this.loaders = project.getObjects().listProperty(String.class).empty();
+        this.gameVersions = project.getObjects().listProperty(String.class);
+        this.loaders = project.getObjects().listProperty(String.class);
         this.curseEnvironment = project.getObjects().property(String.class).convention("both");
         this.artifacts = new HashMap<>();
         this.artifact = project.getObjects().property(Object.class);
@@ -364,6 +373,81 @@ public class ModPublisherGradleExtension {
         AdditionalFile additionalFile = new AdditionalFile();
         file.execute(additionalFile);
         this.additionalFiles.add(additionalFile);
+    }
+
+    public void copyFrom(ModPublisherGradleExtension other, SourceSet sourceSet) {
+        if (other == null) return;
+        this.sourceSet = sourceSet;
+
+        this.debug.convention(other.debug);
+        this.curseID.convention(other.curseID);
+        this.modrinthID.convention(other.modrinthID);
+        this.nightbloomID.convention(other.nightbloomID);
+        this.githubRepo.convention(other.githubRepo);
+        this.versionType.convention(other.versionType);
+        this.changelog.convention(other.changelog);
+        this.version.convention(other.version);
+        this.projectVersion.convention(other.projectVersion);
+        this.displayName.convention(other.displayName);
+        this.gameVersions.convention(other.gameVersions);
+        this.loaders.convention(other.loaders);
+        this.curseEnvironment.convention(other.curseEnvironment);
+        this.artifact.convention(other.artifact);
+        this.isManualRelease.convention(other.isManualRelease);
+        this.disableMalwareScanner.convention(other.disableMalwareScanner);
+        this.disableEmptyJarCheck.convention(other.disableEmptyJarCheck);
+        this.useModrinthStaging.convention(other.useModrinthStaging);
+        this.additionalFiles.convention(other.additionalFiles);
+        this.javaVersions.convention(other.javaVersions);
+
+        if (other.artifacts != null && !other.artifacts.isEmpty()) {
+            if (this.artifacts == null) this.artifacts = new HashMap<>();
+            other.artifacts.forEach(this.artifacts::putIfAbsent);
+        }
+
+        if ((this.apiKeys.curseforge == null || this.apiKeys.curseforge.isEmpty()) && other.apiKeys.curseforge != null) {
+            this.apiKeys.curseforge = other.apiKeys.curseforge;
+        }
+        if ((this.apiKeys.modrinth == null || this.apiKeys.modrinth.isEmpty()) && other.apiKeys.modrinth != null) {
+            this.apiKeys.modrinth = other.apiKeys.modrinth;
+        }
+        if ((this.apiKeys.github == null || this.apiKeys.github.isEmpty()) && other.apiKeys.github != null) {
+            this.apiKeys.github = other.apiKeys.github;
+        }
+        if ((this.apiKeys.nightbloom == null || this.apiKeys.nightbloom.isEmpty()) && other.apiKeys.nightbloom != null) {
+            this.apiKeys.nightbloom = other.apiKeys.nightbloom;
+        }
+
+        this.curseDepends.required.convention(other.curseDepends.required);
+        this.curseDepends.optional.convention(other.curseDepends.optional);
+        this.curseDepends.incompatible.convention(other.curseDepends.incompatible);
+        this.curseDepends.embedded.convention(other.curseDepends.embedded);
+
+        this.modrinthDepends.required.convention(other.modrinthDepends.required);
+        this.modrinthDepends.optional.convention(other.modrinthDepends.optional);
+        this.modrinthDepends.incompatible.convention(other.modrinthDepends.incompatible);
+        this.modrinthDepends.embedded.convention(other.modrinthDepends.embedded);
+
+        this.nightbloomDepends.required.convention(other.nightbloomDepends.required);
+        this.nightbloomDepends.optional.convention(other.nightbloomDepends.optional);
+        this.nightbloomDepends.incompatible.convention(other.nightbloomDepends.incompatible);
+        this.nightbloomDepends.embedded.convention(other.nightbloomDepends.embedded);
+
+        // Proxy: inherit where child hasn't explicitly configured
+        if (this.proxyConfig.httpHost == null) this.proxyConfig.httpHost = other.proxyConfig.httpHost;
+        if (this.proxyConfig.httpPort == 0) this.proxyConfig.httpPort = other.proxyConfig.httpPort;
+        if (this.proxyConfig.httpsHost == null) this.proxyConfig.httpsHost = other.proxyConfig.httpsHost;
+        if (this.proxyConfig.httpsPort == 0) this.proxyConfig.httpsPort = other.proxyConfig.httpsPort;
+
+        // GitHub config: these are plain fields; keep current behavior (inherit when unset)
+        if (this.github.tag == null) this.github.tag = other.github.tag;
+        if (this.github.target == null) this.github.target = other.github.target;
+        if (this.github.repo == null) this.github.repo = other.github.repo;
+        if (this.github.displayName == null) this.github.displayName = other.github.displayName;
+        this.github.draft = this.github.draft || other.github.draft;
+        this.github.createTag = this.github.createTag || other.github.createTag;
+        this.github.createRelease = this.github.createRelease || other.github.createRelease;
+        this.github.updateRelease = this.github.updateRelease || other.github.updateRelease;
     }
 
     @Getter

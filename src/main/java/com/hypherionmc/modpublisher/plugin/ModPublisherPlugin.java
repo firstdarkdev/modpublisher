@@ -10,10 +10,12 @@ import com.hypherionmc.modpublisher.properties.Platform;
 import com.hypherionmc.modpublisher.tasks.*;
 import com.hypherionmc.modpublisher.util.CommonUtil;
 import com.hypherionmc.modpublisher.util.UploadPreChecks;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.provider.Provider;
+import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.bundling.AbstractArchiveTask;
 
 import javax.annotation.Nonnull;
@@ -55,6 +57,60 @@ public class ModPublisherPlugin implements Plugin<Project> {
         nightbloomUploadTask.setDescription("Upload your mod to NightBloom");
         nightbloomUploadTask.setGroup(TASK_GROUP);
 
+        project.getPlugins().withId("java", p -> {
+            Object maybeContainer = project.getExtensions().getByName("sourceSets");
+
+            if (maybeContainer instanceof SourceSetContainer) {
+                SourceSetContainer sourceSets = (SourceSetContainer) maybeContainer;
+
+                sourceSets.configureEach(ss -> {
+                    String ssName = ss.getName();
+                    if ("main".equals(ssName) || "test".equals(ssName)) return;
+
+                    String extName = EXTENSION_NAME + StringUtils.capitalize(ssName);
+                    ModPublisherGradleExtension ssExt = project.getExtensions().create(extName, ModPublisherGradleExtension.class);
+
+                    String aggName = TASK_NAME + StringUtils.capitalize(ssName);
+                    final Task ssUploadTask = project.getTasks().create(aggName, UploadModTask.class);
+                    ssUploadTask.setDescription("Upload your mod to configured platforms for source set '" + ssName + "'");
+                    ssUploadTask.setGroup(INTERNAL_TASK_GROUP);
+
+                    final Task ssCurse = project.getTasks().create(CURSE_TASK + StringUtils.capitalize(ssName), CurseUploadTask.class, project, ssExt);
+                    ssCurse.setDescription("Upload '" + ssName + "' to CurseForge");
+                    ssCurse.setGroup(INTERNAL_TASK_GROUP);
+
+                    final Task ssGithub = project.getTasks().create(GITHUB_TASK + StringUtils.capitalize(ssName), GithubUploadTask.class, project, ssExt);
+                    ssGithub.setDescription("Upload '" + ssName + "' to GitHub");
+                    ssGithub.setGroup(INTERNAL_TASK_GROUP);
+
+                    final Task ssModrinth = project.getTasks().create(MODRINTH_TASK + StringUtils.capitalize(ssName), ModrinthPublishTask.class, project, ssExt);
+                    ssModrinth.setDescription("Upload '" + ssName + "' to Modrinth");
+                    ssModrinth.setGroup(INTERNAL_TASK_GROUP);
+
+                    final Task ssNightbloom = project.getTasks().create(NIGHTBLOOM_TASK + StringUtils.capitalize(ssName), NightBloomUploadTask.class, project, ssExt);
+                    ssNightbloom.setDescription("Upload '" + ssName + "' to NightBloom");
+                    ssNightbloom.setGroup(INTERNAL_TASK_GROUP);
+
+                    project.afterEvaluate(c -> {
+                        ssExt.copyFrom(extension, ss);
+
+                        if (ssExt.getProjectName() == null || ssExt.getProjectName().isEmpty()) {
+                            ssUploadTask.setEnabled(false);
+                            ssCurse.setEnabled(false);
+                            ssGithub.setEnabled(false);
+                            ssModrinth.setEnabled(false);
+                            ssNightbloom.setEnabled(false);
+                            return;
+                        }
+
+                        doPreChecks(project, ssExt, ssCurse, ssModrinth, ssGithub, ssNightbloom, ssUploadTask);
+                        uploadTask.dependsOn(ssUploadTask);
+                    });
+                });
+            }
+
+        });
+
         project.afterEvaluate(c -> {
             if (!isNullOrEmpty(extension.getProxyConfig().getHttpHost()) || !isNullOrEmpty(extension.getProxyConfig().getHttpsHost())) {
                 if (!isNullOrEmpty(extension.getProxyConfig().getHttpHost())) {
@@ -69,38 +125,42 @@ public class ModPublisherPlugin implements Plugin<Project> {
                 project.getLogger().lifecycle("Added Proxy Information");
             }
 
-            try {
-                if (UploadPreChecks.canUploadCurse(project, extension)) {
-                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.CURSEFORGE, extension);
-                    resolveInputTask(project, artifactObject, curseUploadTask);
-                    uploadTask.dependsOn(curseUploadTask);
-                }
-            } catch (Exception ignored) {}
-
-            try {
-                if (UploadPreChecks.canUploadModrinth(project, extension)) {
-                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.MODRINTH, extension);
-                    resolveInputTask(project, artifactObject, modrinthUploadTask);
-                    uploadTask.dependsOn(modrinthUploadTask);
-                }
-            } catch (Exception ignored) {}
-
-            try {
-                if (UploadPreChecks.canUploadGitHub(project, extension)) {
-                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.GITHUB, extension);
-                    resolveInputTask(project, artifactObject, gitHubUploadTask);
-                    uploadTask.dependsOn(gitHubUploadTask);
-                }
-            } catch (Exception ignored) {}
-
-            try {
-                if (UploadPreChecks.canUploadNightbloom(project, extension)) {
-                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.NIGHTBLOOM, extension);
-                    resolveInputTask(project, artifactObject, nightbloomUploadTask);
-                    uploadTask.dependsOn(nightbloomUploadTask);
-                }
-            } catch (Exception ignored) {}
+            doPreChecks(project, extension, curseUploadTask, modrinthUploadTask, gitHubUploadTask, nightbloomUploadTask, uploadTask);
         });
+    }
+
+    private void doPreChecks(Project project, ModPublisherGradleExtension extension, Task curseUploadTask, Task modrinthUploadTask, Task gitHubUploadTask, Task nightbloomUploadTask, Task uploadTask) {
+        try {
+            if (UploadPreChecks.canUploadCurse(project, extension)) {
+                Object artifactObject = CommonUtil.getPlatformArtifact(Platform.CURSEFORGE, extension);
+                resolveInputTask(project, artifactObject, curseUploadTask);
+                uploadTask.dependsOn(curseUploadTask);
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            if (UploadPreChecks.canUploadModrinth(project, extension)) {
+                Object artifactObject = CommonUtil.getPlatformArtifact(Platform.MODRINTH, extension);
+                resolveInputTask(project, artifactObject, modrinthUploadTask);
+                uploadTask.dependsOn(modrinthUploadTask);
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            if (UploadPreChecks.canUploadGitHub(project, extension)) {
+                Object artifactObject = CommonUtil.getPlatformArtifact(Platform.GITHUB, extension);
+                resolveInputTask(project, artifactObject, gitHubUploadTask);
+                uploadTask.dependsOn(gitHubUploadTask);
+            }
+        } catch (Exception ignored) {}
+
+        try {
+            if (UploadPreChecks.canUploadNightbloom(project, extension)) {
+                Object artifactObject = CommonUtil.getPlatformArtifact(Platform.NIGHTBLOOM, extension);
+                resolveInputTask(project, artifactObject, nightbloomUploadTask);
+                uploadTask.dependsOn(nightbloomUploadTask);
+            }
+        } catch (Exception ignored) {}
     }
 
     private void resolveInputTask(Project project, Object inTask, Task mainTask) {

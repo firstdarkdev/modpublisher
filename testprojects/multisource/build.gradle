@@ -1,0 +1,137 @@
+import com.hypherionmc.modpublisher.properties.CurseEnvironment
+import com.hypherionmc.modpublisher.properties.ModLoader
+
+plugins {
+    id 'java'
+    id "com.hypherionmc.modutils.modpublisher"
+}
+
+group = 'me.hypherionmc'
+version = '1.0.18'
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+
+}
+
+sourceSets {
+    main
+    secondary
+    tertiary
+}
+
+artifacts {
+    archives jar
+}
+
+tasks.register('createDummyJar', Jar) {
+    // Configure the JAR task to have no files
+    from {}
+    archiveFileName = 'dummy.jar' // Set the desired name for the JAR file
+}
+
+publisher {
+    apiKeys {
+        //modrinth System.getenv("MODRINTH_TOKEN")
+        curseforge System.getenv("CURSE_TOKEN")
+        //nightbloom("1253")
+    }
+
+    setDebug(true)
+    setCurseID("1234")
+    setModrinthID("dsgfhs79789")
+    setVersionType("beta")
+    setNightbloomID("craterlib")
+    setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/sdlink/combo.md")
+    setProjectVersion("1.20.2-${project.version}")
+    setJavaVersions(JavaVersion.VERSION_1_8, "Java 11", 17)
+    setArtifact(jar)
+    setGameVersions("1.20", "1.20.1", "1.20.2")
+    setLoaders("forge")
+    setDisableEmptyJarCheck(true)
+
+    curseDepends {
+        required("craterlib")
+    }
+
+    modrinthDepends {
+        required("craterlib")
+    }
+}
+
+publisherSecondary {
+    setProjectName("Secondary")
+    setIsManualRelease(true)
+    setDisplayName("Secondary Testing")
+    setArtifact(tasks.createDummyJar)
+    setLoaders("fabric")
+
+    curseDepends {
+        required("fabric-api")
+    }
+}
+
+/*artifacts {
+    archives jar
+}
+
+tasks.register('createDummyJar', Jar) {
+    // Configure the JAR task to have no files
+    from {}
+    archiveFileName = 'dummy.jar' // Set the desired name for the JAR file
+}
+
+publisher {
+    apiKeys {
+        modrinth System.getenv("MODRINTH_TOKEN")
+        curseforge System.getenv("CURSE_TOKEN")
+        nightbloom("1253")
+    }
+
+    setDebug(false)
+
+    setDisplayName("[1.20.x] Simple Discord Link - ${project.version}")
+    setGameVersions("1.20", "1.20.1", "1.20.2")
+    setLoaders(ModLoader.FABRIC, ModLoader.FORGE)
+    setCurseEnvironment(CurseEnvironment.BOTH)
+    setArtifact(jar)
+    setPlatformArtifact(com.hypherionmc.modpublisher.properties.Platform.MODRINTH, createDummyJar)
+    setDisableEmptyJarCheck(true)
+    addAdditionalFile(jar)
+
+    setIsManualRelease(true)
+
+    addAdditionalFile {
+        artifact jar
+        displayName "Some Name"
+        changelog "Hello Changelog"
+    }
+
+    github {
+        tag("v${project.version}")
+        createTag(true)
+        createRelease(true)
+        updateRelease(true)
+        displayName("Hello World")
+    }
+
+    modrinthDepends {
+        required "fabric-api", "craterlib"
+        required "fabric-api"
+    }
+
+    curseDepends {
+        required "fabric-api", "craterlib"
+    }
+
+    proxy {
+        httpHost("")
+        httpPort(12)
+        httpsHost("")
+        httpsPort(13)
+    }
+}*/

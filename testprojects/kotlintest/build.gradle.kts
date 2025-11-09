@@ -15,15 +15,6 @@ repositories {
     maven("https://jitpack.io")
 }
 
-dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
 val dummyTask = tasks.register("createDummyJar", Jar::class) {
     // Configure the JAR task to have no files
     from(setOf<File>()) // Empty set of files
