@@ -3,6 +3,8 @@
 * [Bug] - Fix commit `3562a62` that was wiped out by release 2.1.7
 * [Chore] - Update dependencies
 * [Bug] - Fix NightBloom File ID extraction regex following API change
+* [Exp] - Add experimental support for multi-sourceset projects
+* [Feat] - Add support for new snapshot version formats for CurseForge
 
 ### Version 2.1.7
 

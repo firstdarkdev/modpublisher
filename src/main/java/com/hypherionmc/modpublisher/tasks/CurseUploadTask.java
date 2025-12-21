@@ -35,6 +35,7 @@ public class CurseUploadTask extends DefaultTask {
     // Instance of CurseUpload4J to use
     private CurseUploadApi uploadApi;
     private final Pattern pattern = Pattern.compile("[A-Za-z0-9]+", Pattern.CASE_INSENSITIVE);
+    private final Pattern unobfedMc = Pattern.compile("snapshot-\\d");
 
     private final Project project;
     private final ModPublisherGradleExtension extension;
@@ -84,6 +85,13 @@ public class CurseUploadTask extends DefaultTask {
         for (String gameVersion : extension.getGameVersions().get()) {
             if (pattern.matcher(gameVersion).matches())
                 continue;
+
+            // 21.6+ snapshot version support
+            if (gameVersion.matches(".*-snapshot-\\d+$")) {
+                gameVersion = gameVersion.replaceAll("-snapshot-\\d+$", "-snapshot");
+                artifact.addGameVersion(gameVersion);
+                continue;
+            }
 
             if (gameVersion.contains("-pre") || gameVersion.contains("-rc"))
                 continue;
