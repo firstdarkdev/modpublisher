@@ -448,6 +448,7 @@ public class ModPublisherGradleExtension {
         this.github.createTag = this.github.createTag || other.github.createTag;
         this.github.createRelease = this.github.createRelease || other.github.createRelease;
         this.github.updateRelease = this.github.updateRelease || other.github.updateRelease;
+        this.github.setAsLatest = this.github.setAsLatest || other.github.setAsLatest;
     }
 
     @Getter
@@ -720,6 +721,12 @@ public class ModPublisherGradleExtension {
         private boolean updateRelease = true;
 
         /**
+         * Allow toggling if the upload should be marked as the latest release
+         */
+        @ApiStatus.Experimental
+        private boolean setAsLatest = true;
+
+        /**
          * Override the display name for GitHub
          */
         private String displayName = ModPublisherGradleExtension.this.displayName.getOrNull();
@@ -793,6 +800,15 @@ public class ModPublisherGradleExtension {
          */
         public void displayName(String name) {
             this.displayName = name;
+        }
+
+        /**
+         * Kotlin Compatibility setter
+         * Allow toggling if the upload should be marked as the latest release
+         * @param setAsLatest True if it should be the latest release
+         */
+        public void setAsLatest(boolean setAsLatest) {
+            this.setAsLatest = setAsLatest;
         }
     }
 }

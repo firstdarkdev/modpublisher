@@ -170,6 +170,7 @@ public class GithubUploadTask extends DefaultTask {
         if (wasDraft) {
             releaseUpdater.draft(extension.getGithub().isDraft());
         }
+        releaseUpdater.makeLatest(extension.getGithub().isSetAsLatest() ? GHReleaseBuilder.MakeLatest.TRUE : GHReleaseBuilder.MakeLatest.FALSE);
         releaseUpdater.update();
 
         project.getLogger().lifecycle(
