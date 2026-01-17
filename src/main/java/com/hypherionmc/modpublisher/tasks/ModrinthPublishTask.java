@@ -55,6 +55,11 @@ public class ModrinthPublishTask extends DefaultTask {
      */
     @TaskAction
     public void upload() throws Exception {
+        if (extension.getGameType().get() == "hytale") {
+            project.getLogger().lifecycle("Hytale Plugins are not supported by Modrinth. Skipping...");
+            return;
+        }
+
         if (extension.getSourceSet() == null) {
             project.getLogger().lifecycle("Uploading to Modrinth");
         } else {
