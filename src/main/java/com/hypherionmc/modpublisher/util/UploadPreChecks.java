@@ -70,6 +70,25 @@ public class UploadPreChecks {
         return false;
     }
 
+    public static boolean canUploadModtale(Project project, ModPublisherGradleExtension extension) throws Exception {
+        if (extension == null)
+            return false;
+
+        if (StringUtils.isBlank(extension.getProjectVersion().getOrNull())) {
+            throw new Exception("Version is not defined. This is REQUIRED by Modtale");
+        }
+
+        // Check that both the Modrinth API key and Project ID is defined
+        if (extension.getApiKeys() != null && !extension.getApiKeys().getModtale().isEmpty()) {
+            if (!extension.getModtaleID().isPresent() || extension.getModtaleID().get().isEmpty()) {
+                throw new Exception("Found Modtale API token, but modtaleID is not defined");
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean canUploadNightbloom(Project project, ModPublisherGradleExtension extension) throws Exception {
         if (extension == null)
             return false;

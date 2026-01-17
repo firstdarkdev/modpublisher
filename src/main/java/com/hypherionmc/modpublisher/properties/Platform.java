@@ -14,5 +14,6 @@ public enum Platform {
     CURSEFORGE,
     MODRINTH,
     GITHUB,
-    NIGHTBLOOM
+    NIGHTBLOOM,
+    MODTALE
 }
