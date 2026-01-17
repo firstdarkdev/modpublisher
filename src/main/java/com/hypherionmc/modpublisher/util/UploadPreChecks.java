@@ -43,7 +43,7 @@ public class UploadPreChecks {
         // Check that both the Curseforge API key and Project ID is defined
         if (extension.getApiKeys() != null && !extension.getApiKeys().getCurseforge().isEmpty()) {
             if (!extension.getCurseID().isPresent() || extension.getCurseID().get().isEmpty()) {
-                throw new Exception("Found Curseforge API token, but curseID is not defined");
+                throw new Exception("Found CurseForge API token, but curseID is not defined");
             } else {
                 return true;
             }
@@ -56,7 +56,7 @@ public class UploadPreChecks {
             return false;
 
         if (StringUtils.isBlank(extension.getProjectVersion().getOrNull())) {
-            throw new Exception("Version is not defined. This is REQUIRED by modrinth");
+            throw new Exception("Version is not defined. This is REQUIRED by Modrinth");
         }
 
         // Check that both the Modrinth API key and Project ID is defined

@@ -13,6 +13,7 @@ import com.hypherionmc.modpublisher.util.UploadPreChecks;
 import me.hypherionmc.curseupload.CurseUploadApi;
 import me.hypherionmc.curseupload.constants.CurseChangelogType;
 import me.hypherionmc.curseupload.constants.CurseReleaseType;
+import me.hypherionmc.curseupload.constants.GameType;
 import me.hypherionmc.curseupload.requests.CurseArtifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.gradle.api.DefaultTask;
@@ -64,6 +65,7 @@ public class CurseUploadTask extends DefaultTask {
 
         // Create the API Client and pass the Gradle logger as logger
         uploadApi = new CurseUploadApi(extension.getApiKeys().getCurseforge(), project.getLogger());
+        uploadApi.setGameType(extension.getGameType().get().equalsIgnoreCase("minecraft") ? GameType.MINECRAFT : GameType.HYTALE);
 
         // Enable debug mode if required
         uploadApi.setDebug(extension.getDebug().get());
@@ -112,26 +114,28 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
-        for (String modLoader : extension.getLoaders().get()) {
-            // Replace `modloader` with `risugamis-modloader`
-            if (modLoader.equalsIgnoreCase("modloader")) {
-                artifact.modLoader("risugami's modloader");
-                continue;
-            }
+        if (uploadApi.getGameType() == GameType.MINECRAFT) {
+            for (String modLoader : extension.getLoaders().get()) {
+                // Replace `modloader` with `risugamis-modloader`
+                if (modLoader.equalsIgnoreCase("modloader")) {
+                    artifact.modLoader("risugami's modloader");
+                    continue;
+                }
 
-            // Replace `flint` with `flint loader`
-            if (modLoader.equalsIgnoreCase("flint")) {
-                artifact.modLoader("flint loader");
-                continue;
-            }
+                // Replace `flint` with `flint loader`
+                if (modLoader.equalsIgnoreCase("flint")) {
+                    artifact.modLoader("flint loader");
+                    continue;
+                }
 
-            // No changes needed, pass the modloader along
-            artifact.modLoader(modLoader);
+                // No changes needed, pass the modloader along
+                artifact.modLoader(modLoader);
+            }
         }
         // Back to our regularly scheduled code
 
         // Add Curse Environment tags if they are specified
-        if (extension.getCurseEnvironment().isPresent() && !extension.getCurseEnvironment().get().isEmpty()) {
+        if (extension.getCurseEnvironment().isPresent() && !extension.getCurseEnvironment().get().isEmpty() && uploadApi.getGameType() == GameType.MINECRAFT) {
             String env = extension.getCurseEnvironment().get().toLowerCase();
 
             switch (env) {
@@ -142,14 +146,13 @@ public class CurseUploadTask extends DefaultTask {
                     artifact.addGameVersion("server");
                     break;
                 default:
-                case "both":
                     artifact.addGameVersion("client");
                     artifact.addGameVersion("server");
                     break;
             }
         }
 
-        if (extension.getJavaVersions().isPresent() && !extension.getJavaVersions().get().isEmpty()) {
+        if (extension.getJavaVersions().isPresent() && !extension.getJavaVersions().get().isEmpty() && uploadApi.getGameType() == GameType.MINECRAFT) {
             for (JavaVersion javaVersion : extension.getJavaVersions().get()) {
                 artifact.javaVersion("Java " + javaVersion.getMajorVersion());
             }
@@ -165,7 +168,7 @@ public class CurseUploadTask extends DefaultTask {
             artifact.manualRelease();
         }
 
-        if (extension.getCurseDepends() != null) {
+        if (extension.getCurseDepends() != null && uploadApi.getGameType() == GameType.MINECRAFT) {
             extension.getCurseDepends().getRequired().get().forEach(artifact::requirement);
             extension.getCurseDepends().getOptional().get().forEach(artifact::optional);
             extension.getCurseDepends().getIncompatible().get().forEach(artifact::incompatibility);
@@ -179,7 +182,9 @@ public class CurseUploadTask extends DefaultTask {
             }
         }
 
-        UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
+        if (uploadApi.getGameType() == GameType.MINECRAFT) {
+            UploadPreChecks.checkEmptyJar(extension, uploadFile, extension.getLoaders().get());
+        }
 
         // If debug mode is enabled, this will only log the JSON that will be sent and
         // will not actually upload the file

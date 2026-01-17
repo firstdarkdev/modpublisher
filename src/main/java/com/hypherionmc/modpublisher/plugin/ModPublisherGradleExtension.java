@@ -117,6 +117,8 @@ public class ModPublisherGradleExtension {
 
     @Getter private final Property<Boolean> isManualRelease;
 
+    @Getter private final Property<String> gameType;
+
     // Proxy Config
     @Getter private final ProxyConfig proxyConfig;
 
@@ -140,6 +142,7 @@ public class ModPublisherGradleExtension {
         this.artifacts = new HashMap<>();
         this.artifact = project.getObjects().property(Object.class);
         this.isManualRelease = project.getObjects().property(Boolean.class).convention(false);
+        this.gameType = project.getObjects().property(String.class).convention("minecraft");
 
         // GitHub config
         this.github = new GithubConfig();
@@ -399,6 +402,7 @@ public class ModPublisherGradleExtension {
         this.useModrinthStaging.convention(other.useModrinthStaging);
         this.additionalFiles.convention(other.additionalFiles);
         this.javaVersions.convention(other.javaVersions);
+        this.gameType.convention(other.gameType);
 
         if (other.artifacts != null && !other.artifacts.isEmpty()) {
             if (this.artifacts == null) this.artifacts = new HashMap<>();
