@@ -78,6 +78,7 @@ public class NightBloomUploadTask extends DefaultTask {
         metab.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
         metab.type(extension.getVersionType().get().toLowerCase());
         metab.version(extension.getProjectVersion().get());
+        metab.game(extension.getGameType().get());
 
         if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
             metab.displayName(extension.getDisplayName().get());

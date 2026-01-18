@@ -4,7 +4,7 @@
 * [Feat] - Add support for new snapshot version formats for CurseForge
 * [Feat] - Add option to not set GitHub release as latest
 * [Feat] - Add Support for Modtale
-* [Feat] - Add Support for uploading Hytale plugins to CurseForge
+* [Feat] - Add Support for uploading Hytale plugins to CurseForge and NightBloom
 
 ### Version 2.1.8
 
