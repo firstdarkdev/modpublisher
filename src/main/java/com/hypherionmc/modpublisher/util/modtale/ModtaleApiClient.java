@@ -15,11 +15,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.gradle.api.logging.Logger;
 
 import java.io.File;
-import java.io.InputStreamReader;
 
 @RequiredArgsConstructor(staticName = "of")
 public class ModtaleApiClient {
@@ -37,13 +38,11 @@ public class ModtaleApiClient {
                 .setUserAgent("ModPublisher")
                 .build();
 
-        MultipartEntityBuilder requestBody = MultipartEntityBuilder.create().setMode(HttpMultipartMode.STRICT);
+        MultipartEntityBuilder requestBody = MultipartEntityBuilder.create().setMode(HttpMultipartMode.STRICT).setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-        requestBody.addBinaryBody(
+        requestBody.addPart(
                 "file",
-                artifact,
-                ContentType.APPLICATION_OCTET_STREAM,
-                artifact.getName()
+                new FileBody(artifact, ContentType.APPLICATION_OCTET_STREAM, artifact.getName())
         );
 
         requestBody.addTextBody(
@@ -76,15 +75,18 @@ public class ModtaleApiClient {
             try {
                 final HttpResponse response = client.execute(request);
 
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    final InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
-                    reader.close();
+                int status = response.getStatusLine().getStatusCode();
+
+                String body = response.getEntity() != null
+                        ? EntityUtils.toString(response.getEntity())
+                        : "<no body>";
+
+                if (status == 200) {
                     logger.lifecycle("Successfully uploaded artifact {}", artifact.getName());
                 } else {
                     int errorCode = response.getStatusLine().getStatusCode();
                     String errorMessage = response.getStatusLine().getReasonPhrase();
-
-                    logger.error("Failed to Upload artifact to Modtale. Code: {}, Error: {}", errorCode, errorMessage);
+                    logger.error("Failed to Upload artifact to Modtale. Code: {}, Error: {}, Output: {}", errorCode, errorMessage, body);
                 }
             } catch (Exception e) {
                 CurseUploadApi.INSTANCE.getLogger().error("Failed to Upload artifact to Modtale.", e);

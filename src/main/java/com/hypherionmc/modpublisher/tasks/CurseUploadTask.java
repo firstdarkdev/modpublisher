@@ -95,7 +95,7 @@ public class CurseUploadTask extends DefaultTask {
                 continue;
             }
 
-            if (gameVersion.contains("-pre") || gameVersion.contains("-rc"))
+            if (gameVersion.contains("-pre") || gameVersion.contains("-rc") || gameVersion.matches("^\\d{4}\\.\\d{2}\\.\\d{2}-[a-zA-Z0-9]+$"))
                 continue;
 
             DefaultArtifactVersion min = new DefaultArtifactVersion("b1.6.6");
