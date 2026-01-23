@@ -88,7 +88,7 @@ public class NightBloomUploadTask extends DefaultTask {
 
         List<String> finalGameVersions = new ArrayList<>();
         for (String gameVersion : extension.getGameVersions().get()) {
-            if (gameVersion.endsWith("-snapshot"))
+            if (gameVersion.endsWith("-snapshot") || gameVersion.matches("^\\d{4}\\.\\d{2}\\.\\d{2}-[a-zA-Z0-9]+$"))
                 continue;
             finalGameVersions.add(gameVersion.toLowerCase());
         }

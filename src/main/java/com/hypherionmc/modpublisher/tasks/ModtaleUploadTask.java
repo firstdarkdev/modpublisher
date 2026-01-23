@@ -70,10 +70,23 @@ public class ModtaleUploadTask extends DefaultTask {
                 .setChangelog(CommonUtil.resolveString(extension.getChangelog().get()))
                 .setChannel(extension.getVersionType().get().toUpperCase())
                 .setVersionNumber(extension.getProjectVersion().get())
-                .setGameVersions(extension.getGameVersions().get());
+                .setGameVersions(getGameVersions(extension.getGameVersions().get()));
 
         // If debug mode is enabled, this will only log the JSON that will be sent and
         // will not actually upload the file
         apiClient.upload(extension.getModtaleID().get(), metadata, uploadFile);
     }
+
+    // TODO: This conversion needs to be automated!
+    private List<String> getGameVersions(List<String> inputVersions) {
+        List<String> retVersions = new ArrayList<>();
+
+        for (String version : inputVersions) {
+            if (version.equalsIgnoreCase("early access")) continue;
+            retVersions.add(version);
+        }
+
+        return retVersions;
+    }
+
 }
