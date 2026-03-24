@@ -78,6 +78,7 @@ public class NightBloomUploadTask extends DefaultTask {
         metab.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
         metab.type(extension.getVersionType().get().toLowerCase());
         metab.version(extension.getProjectVersion().get());
+        metab.game(extension.getGameType().get());
 
         if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
             metab.displayName(extension.getDisplayName().get());
@@ -87,7 +88,7 @@ public class NightBloomUploadTask extends DefaultTask {
 
         List<String> finalGameVersions = new ArrayList<>();
         for (String gameVersion : extension.getGameVersions().get()) {
-            if (gameVersion.endsWith("-snapshot"))
+            if (gameVersion.endsWith("-snapshot") || gameVersion.matches("^\\d{4}\\.\\d{2}\\.\\d{2}-[a-zA-Z0-9]+$"))
                 continue;
             finalGameVersions.add(gameVersion.toLowerCase());
         }

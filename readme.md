@@ -1,10 +1,18 @@
 ## ModPublisher
 
-ModPublisher is a Gradle Plugin that allows modders to publish their mods to Modrinth, Curseforge and GitHub in one go.
+ModPublisher is a Gradle Plugin that allows modders to publish their mods to Modrinth, CurseForge and GitHub in one go.
 
 No need for separate plugins, just one!
 
 ---
+
+### Supported Platforms
+
+- [CurseForge](https://curseforge.com)
+- [Modrinth](https://modrinth.com)
+- [GitHub](https://github.com)
+- [NightBloom](https://nightbloom.cc)
+- [Modtale](https://modtale.net)
 
 ### Setup
 
@@ -60,8 +68,14 @@ publisher {
         curseforge System.getenv("CURSE_TOKEN")
         // GitHub Token
         github System.getenv("GITHUB_TOKEN")
+        // Modtale Token
+        modtale System.getenv("MODTALE_TOKEN")
     }
 
+    // Set the Game Type you are uploading for. This is Optional, but needed for Hytale Mods
+    // Current valid values are `hytale` and `minecraft`. minecraft is the default
+    setGameType("minecraft")
+    
     // Enable Debug mode. When enabled, no files will actually be uploaded
     setDebug(true)
     
@@ -70,6 +84,9 @@ publisher {
     
     // Modrinth Project ID
     setModrinthID("dsgfhs79789")
+    
+    // Modtale Project ID
+    setModtaleID("jfghg")
     
     // Type of release. beta, alpha or release
     // You can also use VersionType.BETA, VersionType.ALPHA or VersionType.RELEASE
@@ -81,7 +98,7 @@ publisher {
     // Or https://gist.githubusercontent.com/hypherionmc/92f825d3c9337964cc77c9c8c9bf65e6/raw/ceeaaee5b98c688a23398864fe480b84796a1651/test_gist.md
     setChangelog("changelog.md")
     
-    // Required for Modrinth/GitHub
+    // Required for Modrinth/GitHub/Modtale
     setProjectVersion("1.20.2-${project.version}")
     
     // Fancy display name for the upload.
@@ -94,15 +111,17 @@ publisher {
     // The modloaders your upload supports.
     // This can also be an Enum from ModLoader,
     // like setLoaders(ModLoader.FABRIC, ModLoader.FORGE)
+    // NOT NEEDED FOR HYTALE PLUGINS
     setLoaders("forge", "fabric")
     
     // The new Curseforge Environment tag. Optional
     // Valid values are "server", "client" or "both"
     // You can also use CurseEnvironment.BOTH, or CurseEnvironment.SERVER or CurseEnvironment.CLIENT
+    // NOT NEEDED FOR HYTALE PLUGINS
     setCurseEnvironment("both")
     
     // Upload the release, but keep it "private" until you are ready
-    // Unreleased feature on CurseForge, working on Modrinth
+    // Working CurseForge, not working on Modrinth
     setIsManualRelease(true)
     
     // The file to be uploaded. This can be a file, task, or string.
@@ -117,16 +136,15 @@ publisher {
     // If this is a task, the task specified will be executed before publishing
     // Valid platforms are modrinth, curseforge and github
     setPlatformArtifact("modrinth", modrinthJar)
-
-    // Disable the built in Fractureizer scanner
-    setDisableMalwareScanner(true)
     
     // Add supported java versions. Currently only used by CurseForge
     // Supports anything that can be parsed using JavaVersion.toVersion()
+    // NOT NEEDED FOR HYTALE PLUGINS
     setJavaVersions(JavaVersion.VERSION_1_8, 11)
     
     // Safety check to check if the artifact contains a valid mod metadata entry,
     // which could possibly mean that the jar is empty
+    // NOT NEEDED FOR HYTALE PLUGINS
     setDisableEmptyJarCheck(true)
     
     // Additional files to upload. Same as artifact, this can be a task, file or string
@@ -268,8 +286,14 @@ publisher {
         curseforge(System.getenv("CURSE_TOKEN"))
         // GitHub Token
         github(System.getenv("GITHUB_TOKEN"))
+        // Modtale Token
+        modtale(System.getenv("MODTALE_TOKEN"))
     }
 
+    // Set the Game Type you are uploading for. This is Optional, but needed for Hytale Mods
+    // Current valid values are `hytale` and `minecraft`. minecraft is the default
+    gameType.set("minecraft")
+    
     // Enable Debug mode. When enabled, no files will actually be uploaded
     debug.set(true)
     
@@ -278,6 +302,9 @@ publisher {
     
     // Modrinth Project ID
     modrinthID.set("sdjkg8867")
+    
+    // Modtale Project ID
+    modtaleID.set("gjgndg")
     
     // GitHub repo to publish to. Only required for GitHub
     githubRepo.set("OWNER/REPO")
@@ -330,9 +357,6 @@ publisher {
     // If this is a task, the task specified will be executed before publishing
     // Valid platforms are modrinth, curseforge and github
     setPlatformArtifact("modrinth", modrinthJar)
-
-    // Disable the built in Fractureizer scanner
-    disableMalwareScanner.set(true)
     
     // Safety check to check if the artifact contains a valid mod metadata entry,
     // which could possibly mean that the jar is empty

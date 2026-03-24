@@ -1,11 +1,16 @@
+### Version 2.2.0
+
+* [Exp] - Add experimental support for multi-sourceset projects
+* [Feat] - Add support for new snapshot version formats for CurseForge
+* [Feat] - Add option to not set GitHub release as latest
+* [Feat] - Add Support for Modtale
+* [Feat] - Add Support for uploading Hytale plugins to CurseForge and NightBloom
+
 ### Version 2.1.8
 
 * [Bug] - Fix commit `3562a62` that was wiped out by release 2.1.7
 * [Chore] - Update dependencies
 * [Bug] - Fix NightBloom File ID extraction regex following API change
-* [Exp] - Add experimental support for multi-sourceset projects
-* [Feat] - Add support for new snapshot version formats for CurseForge
-* [Feat] - Add option to not set GitHub release as latest
 
 ### Version 2.1.7
 

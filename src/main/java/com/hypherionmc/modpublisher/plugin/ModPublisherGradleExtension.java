@@ -57,6 +57,9 @@ public class ModPublisherGradleExtension {
     // GitHub Repo. username/repo or URL
     @Getter private final Property<String> githubRepo;
 
+    // Modtale Project ID
+    @Getter private final Property<String> modtaleID;
+
     // Type of release. Valid entries: release, beta, alpha
     @Getter private final Property<String> versionType;
 
@@ -117,6 +120,8 @@ public class ModPublisherGradleExtension {
 
     @Getter private final Property<Boolean> isManualRelease;
 
+    @Getter private final Property<String> gameType;
+
     // Proxy Config
     @Getter private final ProxyConfig proxyConfig;
 
@@ -129,6 +134,7 @@ public class ModPublisherGradleExtension {
         this.modrinthID = project.getObjects().property(String.class);
         this.nightbloomID = project.getObjects().property(String.class);
         this.githubRepo = project.getObjects().property(String.class);
+        this.modtaleID = project.getObjects().property(String.class);
         this.versionType = project.getObjects().property(String.class).convention("release");
         this.changelog = project.getObjects().property(Object.class);
         this.version = project.getObjects().property(String.class);
@@ -140,6 +146,7 @@ public class ModPublisherGradleExtension {
         this.artifacts = new HashMap<>();
         this.artifact = project.getObjects().property(Object.class);
         this.isManualRelease = project.getObjects().property(Boolean.class).convention(false);
+        this.gameType = project.getObjects().property(String.class).convention("minecraft");
 
         // GitHub config
         this.github = new GithubConfig();
@@ -384,6 +391,7 @@ public class ModPublisherGradleExtension {
         this.modrinthID.convention(other.modrinthID);
         this.nightbloomID.convention(other.nightbloomID);
         this.githubRepo.convention(other.githubRepo);
+        this.modtaleID.convention(other.modtaleID);
         this.versionType.convention(other.versionType);
         this.changelog.convention(other.changelog);
         this.version.convention(other.version);
@@ -399,6 +407,7 @@ public class ModPublisherGradleExtension {
         this.useModrinthStaging.convention(other.useModrinthStaging);
         this.additionalFiles.convention(other.additionalFiles);
         this.javaVersions.convention(other.javaVersions);
+        this.gameType.convention(other.gameType);
 
         if (other.artifacts != null && !other.artifacts.isEmpty()) {
             if (this.artifacts == null) this.artifacts = new HashMap<>();
@@ -457,6 +466,7 @@ public class ModPublisherGradleExtension {
         private String modrinth = "";
         private String github = "";
         private String nightbloom = "";
+        private String modtale = "";
 
         /**
          * Mostly for Kotlin support
@@ -492,6 +502,15 @@ public class ModPublisherGradleExtension {
          */
         public void nightbloom(String nightbloom) {
             this.nightbloom = nightbloom;
+        }
+
+        /**
+         * Mostly for Kotlin support
+         * Set the Modtale API key
+         * @param modtale The API Key
+         */
+        public void modtale(String modtale) {
+            this.modtale = modtale;
         }
     }
 

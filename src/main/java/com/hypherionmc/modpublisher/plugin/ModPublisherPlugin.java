@@ -57,6 +57,10 @@ public class ModPublisherPlugin implements Plugin<Project> {
         nightbloomUploadTask.setDescription("Upload your mod to NightBloom");
         nightbloomUploadTask.setGroup(TASK_GROUP);
 
+        final Task modtaleUploadTask = project.getTasks().create(MODTALE_TASK, ModtaleUploadTask.class, project, extension);
+        modtaleUploadTask.setDescription("Upload your mod to Modtale");
+        modtaleUploadTask.setGroup(TASK_GROUP);
+
         project.getPlugins().withId("java", p -> {
             Object maybeContainer = project.getExtensions().getByName("sourceSets");
 
@@ -91,6 +95,10 @@ public class ModPublisherPlugin implements Plugin<Project> {
                     ssNightbloom.setDescription("Upload '" + ssName + "' to NightBloom");
                     ssNightbloom.setGroup(INTERNAL_TASK_GROUP);
 
+                    final Task ssmodtaleUploadTask = project.getTasks().create(MODTALE_TASK, ModtaleUploadTask.class, project, extension);
+                    ssmodtaleUploadTask.setDescription("Upload '" + ssName + "' to Modtale");
+                    ssmodtaleUploadTask.setGroup(TASK_GROUP);
+
                     project.afterEvaluate(c -> {
                         ssExt.copyFrom(extension, ss);
 
@@ -100,10 +108,11 @@ public class ModPublisherPlugin implements Plugin<Project> {
                             ssGithub.setEnabled(false);
                             ssModrinth.setEnabled(false);
                             ssNightbloom.setEnabled(false);
+                            ssmodtaleUploadTask.setEnabled(false);
                             return;
                         }
 
-                        doPreChecks(project, ssExt, ssCurse, ssModrinth, ssGithub, ssNightbloom, ssUploadTask);
+                        doPreChecks(project, ssExt, ssCurse, ssModrinth, ssGithub, ssNightbloom, ssUploadTask, ssmodtaleUploadTask);
                         uploadTask.dependsOn(ssUploadTask);
                     });
                 });
@@ -125,11 +134,11 @@ public class ModPublisherPlugin implements Plugin<Project> {
                 project.getLogger().lifecycle("Added Proxy Information");
             }
 
-            doPreChecks(project, extension, curseUploadTask, modrinthUploadTask, gitHubUploadTask, nightbloomUploadTask, uploadTask);
+            doPreChecks(project, extension, curseUploadTask, modrinthUploadTask, gitHubUploadTask, nightbloomUploadTask, uploadTask, modtaleUploadTask);
         });
     }
 
-    private void doPreChecks(Project project, ModPublisherGradleExtension extension, Task curseUploadTask, Task modrinthUploadTask, Task gitHubUploadTask, Task nightbloomUploadTask, Task uploadTask) {
+    private void doPreChecks(Project project, ModPublisherGradleExtension extension, Task curseUploadTask, Task modrinthUploadTask, Task gitHubUploadTask, Task nightbloomUploadTask, Task uploadTask, Task modtaleTask) {
         try {
             if (UploadPreChecks.canUploadCurse(project, extension)) {
                 Object artifactObject = CommonUtil.getPlatformArtifact(Platform.CURSEFORGE, extension);
@@ -160,6 +169,14 @@ public class ModPublisherPlugin implements Plugin<Project> {
                 resolveInputTask(project, artifactObject, nightbloomUploadTask);
                 uploadTask.dependsOn(nightbloomUploadTask);
             }
+
+            try {
+                if (UploadPreChecks.canUploadModtale(project, extension)) {
+                    Object artifactObject = CommonUtil.getPlatformArtifact(Platform.MODTALE, extension);
+                    resolveInputTask(project, artifactObject, modtaleTask);
+                    uploadTask.dependsOn(modtaleTask);
+                }
+            } catch (Exception ignored) {}
         } catch (Exception ignored) {}
     }
 
