@@ -95,7 +95,7 @@ public class ModPublisherPlugin implements Plugin<Project> {
                     ssNightbloom.setDescription("Upload '" + ssName + "' to NightBloom");
                     ssNightbloom.setGroup(INTERNAL_TASK_GROUP);
 
-                    final Task ssmodtaleUploadTask = project.getTasks().create(MODTALE_TASK, ModtaleUploadTask.class, project, extension);
+                    final Task ssmodtaleUploadTask = project.getTasks().create(MODTALE_TASK + StringUtils.capitalize(ssName), ModtaleUploadTask.class, project, extension);
                     ssmodtaleUploadTask.setDescription("Upload '" + ssName + "' to Modtale");
                     ssmodtaleUploadTask.setGroup(TASK_GROUP);
 
