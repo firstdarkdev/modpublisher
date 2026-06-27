@@ -1,6 +1,6 @@
 ## ModPublisher
 
-ModPublisher is a Gradle Plugin that allows modders to publish their mods to Modrinth, CurseForge and GitHub in one go.
+ModPublisher is a Gradle Plugin that allows modders to publish their mods to multiple platforms, including CurseForge, Modrinth and GitHub in one go.
 
 No need for separate plugins, just one!
 
@@ -14,9 +14,9 @@ No need for separate plugins, just one!
 - [NightBloom](https://nightbloom.cc)
 - [Modtale](https://modtale.net)
 
-### Setup
+--- 
 
-For full documentation, checkout [ModPublisher Docs](https://modpublisher.fdd-docs.com/)
+### Setup
 
 <details open="open"><summary>Groovy DSL</summary>
 
@@ -157,6 +157,7 @@ publisher {
         artifact jar
         displayName "Some Name"
         changelog "Hello Changelog"
+        fileType "sources-jar" // Only supported by modrinth right now
     }
 }
 ```
@@ -376,6 +377,7 @@ publisher {
         artifact(tasks.jar)
         displayName("Test Name")
         changelog("Some Changelog")
+        fileType("sources-jar") // Only supported by Modrinth right now
     }
 }
 ```
@@ -453,3 +455,13 @@ curseDepends {
 }
 ```
 </details>
+
+---
+
+### License
+
+This project and code is licensed under the MIT license. You are free to use, adapt or modify the code for your own use.
+
+Please just don't reuse the name ModPublisher to avoid confusion.
+
+If you need any additional help, open a Ticket or visit our [Discord](https://discord.firstdark.dev)

@@ -1,3 +1,11 @@
+### Version 2.2.2
+
+* feat(modrinth) - Support setting labels for additional file types
+
+### Version 2.2.2
+
+* [Bug] - Fix Modtale upload task trying to trigger for non hytale projects
+
 ### Version 2.2.0
 
 * [Exp] - Add experimental support for multi-sourceset projects
