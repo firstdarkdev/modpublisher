@@ -27,9 +27,7 @@ import org.gradle.api.tasks.TaskAction;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author HypherionSA
@@ -55,7 +53,7 @@ public class ModrinthPublishTask extends DefaultTask {
      */
     @TaskAction
     public void upload() throws Exception {
-        if (extension.getGameType().get() == "hytale") {
+        if (extension.getGameType().get().equals("hytale")) {
             project.getLogger().lifecycle("Hytale Plugins are not supported by Modrinth. Skipping...");
             return;
         }
@@ -87,13 +85,14 @@ public class ModrinthPublishTask extends DefaultTask {
         if (uploadFile == null || !uploadFile.exists())
             throw new FileNotFoundException("Cannot find file " + artifactObject);
 
-        final List<File> uploadFiles = new ArrayList<>();
+        final Map<File, String> uploadFiles = new HashMap<>();
         CreateVersion.CreateVersionRequest.CreateVersionRequestBuilder builder = CreateVersion.CreateVersionRequest.builder();
         builder.projectId(resolveSlug(modrinthAPI, extension.getModrinthID().get()));
         builder.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
         builder.versionType(ProjectVersion.VersionType.valueOf(extension.getVersionType().get().toUpperCase()));
         builder.versionNumber(extension.getProjectVersion().get());
-        uploadFiles.add(uploadFile);
+        builder.files(Collections.singletonList(uploadFile));
+        builder.primaryFile(uploadFile.getName());
 
         if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
             builder.name(extension.getDisplayName().get());
@@ -161,7 +160,7 @@ public class ModrinthPublishTask extends DefaultTask {
 
         if (extension.getAdditionalFiles().isPresent()) {
             for (ModPublisherGradleExtension.AdditionalFile file : extension.getAdditionalFiles().get()) {
-                uploadFiles.add(CommonUtil.resolveFile(project, file.getArtifact()));
+                uploadFiles.put(CommonUtil.resolveFile(project, file.getArtifact()), file.getFileType());
             }
         }
 
@@ -170,19 +169,29 @@ public class ModrinthPublishTask extends DefaultTask {
         }
 
         builder.files(uploadFiles);
+        CreateVersion.CreateVersionRequest request = builder.build();
 
         // Debug mode, so we do not upload the file
         if (extension.getDebug().get()) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            JsonObject object = new JsonObject();
-            object.add("metadata", gson.toJsonTree(builder.build()));
-            object.addProperty("file", uploadFile.getName());
+            JsonObject meta = gson.toJsonTree(builder.build()).getAsJsonObject();
+
+            if (meta.has("fileTypes")) {
+                meta.remove("fileTypes");
+            }
 
             JsonArray additional = new JsonArray();
-            uploadFiles.forEach(f -> additional.add(f.getName()));
-            object.add("additional", additional);
 
-            project.getLogger().lifecycle("Full data to be sent for upload: {}", gson.toJson(object));
+            request.getFileTypes().forEach((f, fType) -> {
+                JsonObject fileTypeObject = new JsonObject();
+                fileTypeObject.addProperty("type", fType);
+                fileTypeObject.addProperty("file", f);
+                additional.add(fileTypeObject);
+            });
+
+            meta.add("additional", additional);
+
+            project.getLogger().lifecycle("Full data to be sent for upload: {}", gson.toJson(meta));
             return;
         }
 

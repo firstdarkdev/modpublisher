@@ -6,10 +6,7 @@
  */
 package com.hypherionmc.modpublisher.plugin;
 
-import com.hypherionmc.modpublisher.properties.CurseEnvironment;
-import com.hypherionmc.modpublisher.properties.ModLoader;
-import com.hypherionmc.modpublisher.properties.Platform;
-import com.hypherionmc.modpublisher.properties.ReleaseType;
+import com.hypherionmc.modpublisher.properties.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -651,6 +648,7 @@ public class ModPublisherGradleExtension {
         private Object artifact;
         private String displayName;
         private String changelog;
+        private String fileType;
 
         public void configure(Action<AdditionalFile> action) {
             action.execute(this);
@@ -678,6 +676,14 @@ public class ModPublisherGradleExtension {
          */
         public void changelog(String changelog) {
             this.changelog = changelog;
+        }
+
+        /**
+         * Specify the file type for additional files
+         * @param fileType The type of file this represents. sources-jar, etc
+         */
+        public void fileType(String fileType) {
+            this.fileType = fileType;
         }
     }
 

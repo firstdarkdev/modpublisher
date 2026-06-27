@@ -35,9 +35,9 @@ publisher {
         nightbloom("1253")
     }
 
-    setDebug(false)
+    setDebug(true)
     setCurseID("1234")
-    setModrinthID("dsgfhs79789")
+    setModrinthID("craterlib")
     setVersionType("beta")
     setNightbloomID("craterlib")
     setChangelog("https://raw.githubusercontent.com/hypherionmc/changelogs/main/sdlink/combo.md")
@@ -57,6 +57,7 @@ publisher {
         artifact jar
         displayName "Some Name"
         changelog "Hello Changelog"
+        fileType "sources-jar"
     }
 
     github {
