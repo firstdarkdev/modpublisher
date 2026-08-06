@@ -1,3 +1,7 @@
+### Version 2.2.3
+
+* chore(cleanup) - Don't shadow dependencies. We don't need half of them - Fixes #43
+
 ### Version 2.2.2
 
 * feat(modrinth) - Support setting labels for additional file types

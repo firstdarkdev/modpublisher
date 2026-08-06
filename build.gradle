@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'idea'
     id 'java-gradle-plugin'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'com.gradle.plugin-publish' version '1.2.1'
     id 'com.diffplug.spotless' version '6.13.0'
     id 'com.hypherionmc.modutils.orion' version '1.0.+'
@@ -24,11 +23,6 @@ description = "Gradle plugin to Upload and Publish mods to CurseForge/Modrinth/G
 archivesBaseName = 'ModPublisher'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
-configurations {
-    shadeMe
-    implementation.extendsFrom shadeMe
-}
-
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
@@ -37,11 +31,11 @@ repositories {
 dependencies {
     implementation gradleApi()
 
-    shadeMe "me.hypherionmc.modutils:CurseUpload4j:${curse4j}"
-    shadeMe 'com.github.masecla22:Modrinth4J:-SNAPSHOT'
-    shadeMe "org.kohsuke:github-api:${github}"
-    shadeMe "org.apache.maven:maven-artifact:${mavenart}"
-    shadeMe "com.hypherionmc.nightbloom:nightbloom4j:${nightbloom}"
+    implementation "me.hypherionmc.modutils:CurseUpload4j:${curse4j}"
+    implementation 'com.github.masecla22:Modrinth4J:-SNAPSHOT'
+    implementation "org.kohsuke:github-api:${github}"
+    implementation "org.apache.maven:maven-artifact:${mavenart}"
+    implementation "com.hypherionmc.nightbloom:nightbloom4j:${nightbloom}"
 
     compileOnly "org.projectlombok:lombok:${lombok}"
     annotationProcessor "org.projectlombok:lombok:${lombok}"
@@ -55,12 +49,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
-}
-
-shadowJar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    configurations = [project.configurations.getByName("shadeMe")]
-    archiveClassifier.set(null)
 }
 
 gradlePlugin {
