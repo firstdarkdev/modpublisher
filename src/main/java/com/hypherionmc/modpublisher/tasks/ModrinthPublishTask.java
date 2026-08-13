@@ -91,8 +91,7 @@ public class ModrinthPublishTask extends DefaultTask {
         builder.changelog(CommonUtil.resolveString(extension.getChangelog().get()));
         builder.versionType(ProjectVersion.VersionType.valueOf(extension.getVersionType().get().toUpperCase()));
         builder.versionNumber(extension.getProjectVersion().get());
-        builder.files(Collections.singletonList(uploadFile));
-        builder.primaryFile(uploadFile.getName());
+        uploadFiles.put(uploadFile, "primary");
 
         if (extension.getDisplayName().isPresent() && !extension.getDisplayName().get().isEmpty()) {
             builder.name(extension.getDisplayName().get());
