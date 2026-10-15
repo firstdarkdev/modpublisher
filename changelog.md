@@ -1,3 +1,7 @@
+### Version 2.2.4
+
+* bug(modrinth) - Another fix for additional files removing primary file - #44 again
+
 ### Version 2.2.3
 
 * bug(modrinth) - Adding additional files removes primary file - Fixes #44
